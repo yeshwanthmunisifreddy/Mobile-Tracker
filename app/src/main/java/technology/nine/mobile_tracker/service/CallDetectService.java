@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.data.CallLogsDBHelper;
 
 public class CallDetectService extends Service {
 
-
     public CallDetectService() {
     }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int res = super.onStartCommand(intent, flags, startId);
@@ -23,7 +22,9 @@ public class CallDetectService extends Service {
             String startTime = intent.getStringExtra("StartTime");
             String duration = intent.getStringExtra("Duration");
             String callType = intent.getStringExtra("CallType");
-            helper.insertCalllogs(phoneNumber,callType,startDate,startTime,duration);
+            boolean insert = helper.insertCalllogs(phoneNumber, callType, startDate, startTime, duration);
+              if (insert){
+              }
         }
         return res;
     }
@@ -38,4 +39,6 @@ public class CallDetectService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
 }
