@@ -1,10 +1,12 @@
 package technology.nine.mobile_tracker;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +16,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import java.util.List;
 
 import technology.nine.mobile_tracker.adapters.CallLogsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.CallLogsDBHelper;
+import technology.nine.mobile_tracker.model.CallLogs;
 import technology.nine.mobile_tracker.model.UserData;
 import technology.nine.mobile_tracker.service.CallDetectService;
 
@@ -34,16 +38,21 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     CallLogsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
-    List<UserData> userData = new ArrayList<>();
-    CallDetectService callDetectService;
-    private boolean bound = false;
+    List<CallLogs> callLogs = new ArrayList<>();
     private static final int READ_CALL_LOG_PERMISSION_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            fetch();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.recycler_view);
@@ -51,13 +60,27 @@ public class MainActivity extends AppCompatActivity {
         permissions();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_UI));
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(receiver);
+    }
+
     private void fetch() {
         helper = new CallLogsDBHelper(this);
-        userData = helper.getAllCallLogs();
+        callLogs = helper.getAllCallLog();
         linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         adapter = new CallLogsRecyclerAdapter(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter.addAll(userData);
+        adapter.addAll(callLogs);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -65,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public void permissions() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_CALL_LOG) ) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_CALL_LOG)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need Read Call Log Permissions");
                     builder.setTitle("This app  needs Read Call Log Permission.");
@@ -84,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     builder.show();
-                } else if ( permissionStatus.getBoolean(Manifest.permission.READ_CALL_LOG, false)) {
+                } else if (permissionStatus.getBoolean(Manifest.permission.READ_CALL_LOG, false)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need Read Call Log Permissions");
                     builder.setMessage("This app  needs Read Call Log Permission.");
@@ -108,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                     builder.show();
                 } else {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission.READ_CALL_LOG}, READ_CALL_LOG_PERMISSION_CONSTANT);
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_CALL_LOG}, READ_CALL_LOG_PERMISSION_CONSTANT);
                 }
                 SharedPreferences.Editor editor = permissionStatus.edit();
                 editor.putBoolean(Manifest.permission.READ_CALL_LOG, true);
@@ -156,13 +179,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION_SETTING) {
-            if (  ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
                 //Got Permission
-              fetch();
+                fetch();
             }
         }
     }
@@ -172,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         if (sentToSettings) {
-            if ( ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)  == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
                 //Got Permission
-            fetch();
+                fetch();
             }
         }
     }

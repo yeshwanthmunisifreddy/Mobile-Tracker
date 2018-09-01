@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Mobile-Tracker</string>
+    <string name="missed_call">Rejected call</string>
+    <string name="incoming_call">Incoming call</string>
+    <string name="didnt_connect">Didn\'t connect</string>
+    <string name="outgoing_call">Outgoing call</string>
+    <string name="rejected_call">Rejected call</string>
 </resources>

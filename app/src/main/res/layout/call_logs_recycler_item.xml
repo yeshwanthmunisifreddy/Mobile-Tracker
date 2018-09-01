@@ -72,13 +72,14 @@
             android:textColor="#000000"
             android:textSize="15dp"
             tools:text="7036336023" />
+
         <ImageView
             android:id="@+id/call_type_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:background="@null"
-            android:src="@drawable/ic_outgoing_call_icon"/>
+            android:src="@drawable/ic_outgoing_call_icon" />
     </LinearLayout>
 
     <TextView
@@ -97,31 +98,40 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/guideline3">
+
         <TextView
             android:id="@+id/date"
-            android:textColor="#546e7a"
-            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Incoming"
             android:gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/time"
             android:textColor="#546e7a"
             android:textSize="14sp"
+            tools:text="Incoming" />
+
+        <TextView
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            tools:text="6:35 PM"
             android:gravity="center_vertical"
-            />
+            android:textColor="#546e7a"
+            android:textSize="14sp"
+            tools:text="6:35 PM" />
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:gravity="center_vertical"
+            android:textColor="#546e7a"
+            android:textSize="14sp"
+            tools:text="6:35 sec" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

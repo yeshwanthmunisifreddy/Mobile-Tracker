@@ -1,4 +1,5 @@
 package technology.nine.mobile_tracker.broadcastReceivers;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,26 +23,26 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-      //  Log.e("OnReceive", "is called");
+        //  Log.e("OnReceive", "is called");
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
         if (Objects.equals(intent.getAction(), "android.intent.action.NEW_OUTGOING_CALL")) {
-          //  Log.e("if", "is called");
+            //  Log.e("if", "is called");
             savedNumber = Objects.requireNonNull(intent.getExtras()).getString("android.intent.extra.PHONE_NUMBER");
         } else {
-           // Log.e("else", "is called");
+            // Log.e("else", "is called");
             String stateStr = Objects.requireNonNull(intent.getExtras()).getString(TelephonyManager.EXTRA_STATE);
             String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
             int state = 0;
-          //  Log.e("State", stateStr);
+            //  Log.e("State", stateStr);
             assert stateStr != null;
             if (stateStr.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                 //Log.e("IDLE", "is called");
                 state = TelephonyManager.CALL_STATE_IDLE;
             } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-             //   Log.e("HOOk", "is called");
+                //   Log.e("HOOk", "is called");
                 state = TelephonyManager.CALL_STATE_OFFHOOK;
             } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-              //  Log.e("RINGING", "is called");
+                //  Log.e("RINGING", "is called");
                 state = TelephonyManager.CALL_STATE_RINGING;
             }
 
@@ -51,26 +52,26 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
 
     //Derived classes should override these to respond to specific events of interest
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
-       // Log.e("onIncomingCallStarted", "is called");
+        // Log.e("onIncomingCallStarted", "is called");
     }
 
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
-       // Log.e("onOutgoingCallStarted", "is called");
+        // Log.e("onOutgoingCallStarted", "is called");
     }
 
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
-      //  Log.e("onIncomingCallEnded", "is called");
+        //  Log.e("onIncomingCallEnded", "is called");
         intentService(ctx, number, start, end, "Incoming call");
 
     }
 
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
-       // Log.e("onOutgoingCallEnded", "is called");
+        // Log.e("onOutgoingCallEnded", "is called");
         intentService(ctx, number, start, end, "Outgoing call");
     }
 
     protected void onMissedCall(Context ctx, String number, Date start) {
-       // Log.e("onMissedCall", "is called");
+        // Log.e("onMissedCall", "is called");
         intentService(ctx, number, start, null, "Missed call");
     }
     //Deals with actual events
@@ -87,7 +88,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-               // Log.e("ringing", "is called");
+                // Log.e("ringing", "is called");
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -95,7 +96,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                 if (lastState != TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = false;
                     callStartTime = new Date();
-                  //  Log.e("hook", "is called");
+                    //  Log.e("hook", "is called");
                     onOutgoingCallStarted(context, savedNumber, callStartTime);
                 }
                 break;
@@ -103,14 +104,14 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Ring but no pickup-  a miss
-                  //  Log.e("missed", "is called");
+                    //  Log.e("missed", "is called");
                     onMissedCall(context, savedNumber, callStartTime);
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
-                  //  Log.e("incomingRinging", "is called");
+                    //  Log.e("incomingRinging", "is called");
                 } else {
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
-                //    Log.e("outgoingRinging", "is called");
+                    //    Log.e("outgoingRinging", "is called");
                 }
                 break;
         }
@@ -118,7 +119,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void intentService(Context ctx, String number, Date start, Date end, String callType) {
-       // Log.e("IntentService","is called");
+        // Log.e("IntentService","is called");
         DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
         DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
@@ -137,28 +138,28 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
             startDate = dateFormat.format(start);
             startTime = timeFormat.format(start);
             t1 = dateFormat1.format(start);
-           // Log.e("T1", t1);
+            // Log.e("T1", t1);
 
         }
         if (end != null) {
             endDate = dateFormat.format(end);
             endTime = timeFormat.format(end);
             t2 = dateFormat1.format(end);
-           // Log.e("T2", t1);
+            // Log.e("T2", t1);
         }
         if (start != null && end != null) {
             try {
                 d1 = format.parse(dateFormat1.format(start));
                 d2 = format.parse(dateFormat1.format(end));
                 diff = d2.getTime() - d1.getTime();
-               // Log.e("Diff ", String.valueOf(diff));
-                int  minutes = (int) (diff/(60*1000)%60);
-                if ( minutes != 0) {
+                // Log.e("Diff ", String.valueOf(diff));
+                int minutes = (int) (diff / (60 * 1000) % 60);
+                if (minutes != 0) {
                     duration = (diff / (60 * 1000) % 60) + "m" + " " + (diff / 1000 % 60) + "sec";
-                   // Log.e("Duration ", duration);
-                }else {
+                    // Log.e("Duration ", duration);
+                } else {
                     duration = (diff / 1000 % 60) + "sec";
-                  //  Log.e("Duration ", duration);
+                    //  Log.e("Duration ", duration);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
