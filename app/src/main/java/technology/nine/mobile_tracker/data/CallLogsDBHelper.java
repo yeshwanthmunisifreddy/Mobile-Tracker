@@ -125,8 +125,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
                 String time = cursor.getString(cursor.getColumnIndexOrThrow(TIME));
                 String duration = cursor.getString(cursor.getColumnIndexOrThrow(DURATION));
-                Log.e("CallLog", name + " " + number + " " + callType + " " + date + " " +time + " "+ duration);
-
+              //  Log.e("CallLog", name + " " + number + " " + callType + " " + date + " " +time + " "+ duration);
                 callLogs.add(new CallLogs(name, number, callType, date, time, duration));
             }
         }finally {

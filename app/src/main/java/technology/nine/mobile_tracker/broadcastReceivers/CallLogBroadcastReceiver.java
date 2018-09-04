@@ -74,6 +74,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
         // Log.e("onMissedCall", "is called");
         intentService(ctx, number, start, null, "Missed call");
     }
+
     //Deals with actual events
 
     //Incoming call-  goes from IDLE to RINGING when it rings, to OFFHOOK when it's answered, to IDLE when its hung up
@@ -98,7 +99,11 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                     callStartTime = new Date();
                     //  Log.e("hook", "is called");
                     onOutgoingCallStarted(context, savedNumber, callStartTime);
-                }
+                }if (lastState == TelephonyManager.CALL_STATE_RINGING){
+                    isIncoming = true;
+                    callStartTime = new Date();
+                    savedNumber = number;
+            }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
@@ -156,10 +161,8 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                 int minutes = (int) (diff / (60 * 1000) % 60);
                 if (minutes != 0) {
                     duration = (diff / (60 * 1000) % 60) + "m" + " " + (diff / 1000 % 60) + "sec";
-                    // Log.e("Duration ", duration);
                 } else {
                     duration = (diff / 1000 % 60) + "sec";
-                    //  Log.e("Duration ", duration);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

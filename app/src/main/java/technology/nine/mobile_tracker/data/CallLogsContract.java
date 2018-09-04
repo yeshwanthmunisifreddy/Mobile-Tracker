@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 class CallLogsContract {
     private CallLogsContract() {
     }
-
+    //CallLogs constant fields
     static class CallLogsEntry implements BaseColumns {
         static final String TABLE_NAME = "callLogs";
         static final String CALL_LOG_TABLE_NAME = "CallLog";

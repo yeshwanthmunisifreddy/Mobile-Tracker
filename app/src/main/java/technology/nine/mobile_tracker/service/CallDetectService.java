@@ -32,8 +32,8 @@ public class CallDetectService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int res = super.onStartCommand(intent, flags, startId);
+        CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
         if (intent != null) {
-            CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
             String phoneNumber = intent.getStringExtra("PhoneNumber");
             String startDate = intent.getStringExtra("StartDate");
             String startTime = intent.getStringExtra("StartTime");
@@ -42,24 +42,35 @@ public class CallDetectService extends Service {
             // ContentResolver resolver = getContentResolver()
             Cursor cursor = null;
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            }
-            cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC limit 1");
-            // cursor =getContentResolver().query(CONTENT_URI,null,null,null,null);
-            if (cursor != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
                 try {
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.CACHED_NAME));
-                        String number = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.NUMBER));
-                        String durations = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.DURATION));
-                        String callTypes = cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE));
-                       // Log.e("CallLogs", name + " " + number + " " + callTypes + " " + startDate + " " + startTime + " "+ durations);
-                        if (helper.insertCallLog(name, number, callTypes, startDate, startTime, durations)) {
-                            updateUi();
+                    cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC limit 1");
+                    // cursor =getContentResolver().query(CONTENT_URI,null,null,null,null);
+                    if (cursor != null) {
+                        try {
+                            while (cursor.moveToNext()) {
+                                String name = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.CACHED_NAME));
+                                String number = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.NUMBER));
+                                String durations = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.DURATION));
+                                String callTypes = cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE));
+                                // Log.e("CallLogs", name + " " + number + " " + callTypes + " " + startDate + " " + startTime + " "+ durations);
+                                if (helper.insertCallLog(name, number, callTypes, startDate, startTime, durations)) {
+
+                                    updateUi();
+                                }
+                            }
+                        } catch (Exception e) {
+                        e.printStackTrace();
+                        } finally {
+                            cursor.close();
                         }
+
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 } finally {
-                    cursor.close();
+                    helper.close();
                 }
             }
 
@@ -80,6 +91,7 @@ public class CallDetectService extends Service {
     }
 
     public void updateUi() {
+        //  Log.e("UpdateUi","is called");
         Intent intent = new Intent(UPDATE_UI);
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .sendBroadcast(intent);

@@ -39,42 +39,31 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
         String time = callLogs.get(i).getCallTime();
         String duration = callLogs.get(i).getCallDuration();
         holder.number.setText(number);
-        if (!duration.equals("0")) {
-            if (!callType.equals("3")){
-                int second = Integer.parseInt(duration);
-                if (second > 60){
-                    int seconds = second%60;
-                    int diff = (second-seconds)/60;
-                    holder.duration.setText(diff+"m "+seconds+"sec");
-                }
-                else {
-                   holder.duration.setText(second+" sec");
-                }
 
-                Log.e("Seconds", String.valueOf(second));
-
-            }
-
-        }
         if (callType.equals("1")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_incoming_call_icon));
             if (duration.equals("0")) {
                 holder.callType.setText(R.string.rejected_call);
+                holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.incoming_call);
+                duration(duration,callType,holder);
             }
         }
         if (callType.equals("2")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_outgoing_call_icon));
             if (duration.equals("0")) {
                 holder.callType.setText(R.string.didnt_connect);
+                holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.outgoing_call);
+                duration(duration,callType,holder);
             }
         }
         if (callType.equals("3")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_missed_call_icon));
             holder.callType.setText(R.string.missed_call);
+            holder.duration.setText(" ");
 
         }
         holder.date.setText(date);
@@ -116,5 +105,23 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
             add(result);
         }
 
+    }
+    public void duration(String duration,String  callType,MyViewHolder holder){
+        if (!duration.equals("0")) {
+            if (!callType.equals("3")){
+                int second = Integer.parseInt(duration);
+                if (second > 60){
+                    int seconds = second%60;
+                    int diff = (second-seconds)/60;
+                    holder.duration.setText(diff+"m "+seconds+"sec");
+                }
+                else {
+                    holder.duration.setText(second+" sec");
+                }
+
+
+            }
+
+        }
     }
 }
