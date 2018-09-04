@@ -47,6 +47,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
     }public  void startIntentService(Context context){
         if (!myServiceRunning(context,SmsDetectingService.class)){
             Intent  serviceIntent =  new Intent(context, SmsDetectingService.class);
+            serviceIntent.setPackage("technology.nine.mobile_tracker");
             if (Build.VERSION.SDK_INT >= 26){
                 context.startForegroundService(serviceIntent);
             }

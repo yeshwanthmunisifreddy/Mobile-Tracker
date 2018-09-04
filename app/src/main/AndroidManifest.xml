@@ -59,6 +59,9 @@
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="custom.SMS_SERVICE"/>
+            </intent-filter>
         </service>
     </application>
 

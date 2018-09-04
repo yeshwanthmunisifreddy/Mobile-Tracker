@@ -62,7 +62,7 @@ public class CallLogActivity extends AppCompatActivity {
         permissions();
 
         if (!isMyServiceRunning(SmsDetectingService.class)) {
-            mServiceIntent = new Intent(this, SmsDetectingService.class);
+            mServiceIntent = new Intent(CallLogActivity.this, SmsDetectingService.class);
             if (Build.VERSION.SDK_INT >= 26) {
                 startForegroundService(mServiceIntent);
             }
@@ -131,16 +131,22 @@ public class CallLogActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         Log.e("onDestroy ", "is called");
         try {
             Log.e("onDestroyTry ", "is called");
-            stopService( new Intent(this, SmsDetectingService.class));
+            if (isMyServiceRunning(SmsDetectingService.class)){
+                stopService(new Intent(CallLogActivity.this,SmsDetectingService.class
+                ));
+            }
         } catch (Exception e) {
             Log.e("Exception OnStop", String.valueOf(e));
             e.printStackTrace();
 
         }
+
+
+        super.onDestroy();
     }
 
     private void fetch() {
