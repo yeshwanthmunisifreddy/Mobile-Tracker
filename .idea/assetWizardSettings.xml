@@ -28,12 +28,11 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="757575" />
-                            <entry key="height" value="12" />
-                            <entry key="outputName" value="ic_outgoing_call_icon" />
+                            <entry key="outputName" value="ic_notification_icon" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Yeshwanth Munisif" />
-                            <entry key="width" value="12" />
+                            <entry key="sourceFile" value="C:\Users\Yeshwanth Munisif\Downloads\bell-outline.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -2,6 +2,8 @@ package technology.nine.mobile_tracker.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,6 +34,7 @@ public class SmsDetectingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e("SMS onStartCommand", "is called");
         super.onStartCommand(intent, flags, startId);
+
         return START_STICKY;
     }
 
@@ -44,8 +47,6 @@ public class SmsDetectingService extends Service {
         broadcastIntent.setAction("technology.nine.mobile_tracker.SMS_SERVICE");
         sendBroadcast(broadcastIntent);
         getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext()));
-
-
 
     }
 
@@ -65,4 +66,6 @@ public class SmsDetectingService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
 }

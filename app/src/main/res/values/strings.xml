@@ -5,4 +5,6 @@
     <string name="didnt_connect">Didn\'t connect</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="rejected_call">Rejected call</string>
+    <string name="call_logs">Call logs</string>
+    <string name="message_logs">Message Logs</string>
 </resources>

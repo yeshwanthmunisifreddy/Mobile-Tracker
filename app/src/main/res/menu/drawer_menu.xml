@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group1">
+        <item
+            android:id="@+id/call_logs"
+            android:icon="@drawable/ic_call_logs"
+            android:title="@string/call_logs" />
+        <item
+            android:id="@+id/message_logs"
+            android:icon="@drawable/ic_message_logs"
+            android:title="@string/message_logs" />
+        <item
+            android:id="@+id/notifications"
+            android:icon="@drawable/ic_notification_icon"
+            android:title="Notifications" />
+    </group>
+</menu>

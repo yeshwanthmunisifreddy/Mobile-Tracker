@@ -27,6 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity" />
 
         <receiver android:name=".broadcastReceivers.CallLogBroadcastReceiver">
             <intent-filter android:priority="23">
@@ -42,10 +43,11 @@
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter  android:priority="20">
+            <intent-filter android:priority="20">
                 <action android:name="technology.nine.mobile_tracker.SMS_SERVICE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                    <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
@@ -53,14 +55,14 @@
             android:name=".service.CallDetectService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false" />
         <service
             android:name=".service.SmsDetectingService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false">
             <intent-filter>
-                <action android:name="custom.SMS_SERVICE"/>
+                <action android:name="custom.SMS_SERVICE" />
             </intent-filter>
         </service>
     </application>
