@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/group1">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/call_logs"
             android:icon="@drawable/ic_call_logs"
-            android:title="@string/call_logs" />
+            android:title="Calls" />
         <item
             android:id="@+id/message_logs"
             android:icon="@drawable/ic_message_logs"
-            android:title="@string/message_logs" />
+            android:title="Messages" />
         <item
-            android:id="@+id/notifications"
+            android:id="@+id/notification_logs"
             android:icon="@drawable/ic_notification_icon"
             android:title="Notifications" />
+
     </group>
 </menu>
