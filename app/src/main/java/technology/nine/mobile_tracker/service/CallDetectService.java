@@ -24,58 +24,16 @@ import static android.provider.Telephony.Sms.Inbox.CONTENT_URI;
 
 public class CallDetectService extends Service {
     public static final String UPDATE_UI = "UpdateUi";
+    CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
 
     public CallDetectService() {
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int res = super.onStartCommand(intent, flags, startId);
-        CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
-        if (intent != null) {
-            String phoneNumber = intent.getStringExtra("PhoneNumber");
-            String startDate = intent.getStringExtra("StartDate");
-            String startTime = intent.getStringExtra("StartTime");
-            String duration = intent.getStringExtra("Duration");
-            String callType = intent.getStringExtra("CallType");
-            // ContentResolver resolver = getContentResolver()
-            Cursor cursor = null;
+         insertData(intent);
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC limit 1");
-                    // cursor =getContentResolver().query(CONTENT_URI,null,null,null,null);
-                    if (cursor != null) {
-                        try {
-                            while (cursor.moveToNext()) {
-                                String name = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.CACHED_NAME));
-                                String number = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.NUMBER));
-                                String durations = cursor.getString(cursor.getColumnIndex(android.provider.CallLog.Calls.DURATION));
-                                String callTypes = cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE));
-                                // Log.e("CallLogs", name + " " + number + " " + callTypes + " " + startDate + " " + startTime + " "+ durations);
-                                if (helper.insertCallLog(name, number, callTypes, startDate, startTime, durations)) {
-
-                                    updateUi();
-                                }
-                            }
-                        } catch (Exception e) {
-                        e.printStackTrace();
-                        } finally {
-                            cursor.close();
-                        }
-
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    helper.close();
-                }
-            }
-
-
-        }
         return res;
     }
 
@@ -98,4 +56,21 @@ public class CallDetectService extends Service {
 
     }
 
+    private void insertData(Intent intent) {
+        if (intent != null) {
+            String phoneNumber = intent.getStringExtra("PhoneNumber");
+            String startDate = intent.getStringExtra("StartDate");
+            String startTime = intent.getStringExtra("StartTime");
+            String duration = intent.getStringExtra("Duration");
+            String callType = intent.getStringExtra("CallType");
+            try {
+                Log.e("CallDetectService",phoneNumber + startDate+startTime+duration+callType+"");
+                if (helper.insertCallLog(" ", phoneNumber, callType, startDate, startTime, duration)) {
+                    updateUi();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+    }
 }

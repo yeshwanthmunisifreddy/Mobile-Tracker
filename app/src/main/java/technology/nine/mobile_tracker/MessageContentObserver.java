@@ -45,20 +45,20 @@ public class MessageContentObserver extends ContentObserver {
         }
 
     }
-    public  void  insertSmsDatabase(){
+    private void  insertSmsDatabase(){
         try{
             Uri uri = Uri.parse("content://sms/sent");
-            Cursor cursor =context.getContentResolver().query(uri,null,null,null,"date DESC");
+            Cursor cursor =context.getContentResolver().query(uri,null,null,null,"date DESC limit 1");
             if (cursor != null){
                 try {
                     while (cursor.moveToNext()){
                         String body = cursor.getString(cursor.getColumnIndex("body")); //content of sms
                         String add = cursor.getString(cursor.getColumnIndex("address")); //phone num
-                        String time = cursor.getString(cursor.getColumnIndex("date")); //date
+                        String date = cursor.getString(cursor.getColumnIndex("date")); //date
+                        String time = cursor.getString(cursor.getColumnIndex(""));
                         String protocol = cursor.getString(cursor.getColumnIndex("protocol"));
                         Log.e("SMS Sent",body +" "+ add + " "+ time + " "+ protocol );
                     }
-
                 }finally {
                     cursor.close();
                 }

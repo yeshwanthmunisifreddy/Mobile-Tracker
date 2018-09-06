@@ -15,6 +15,7 @@ import java.util.List;
 
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.model.CallLogs;
+
 public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecyclerAdapter.MyViewHolder> {
     private List<CallLogs> callLogs;
     private Context context;
@@ -39,7 +40,11 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
         String time = callLogs.get(i).getCallTime();
         String duration = callLogs.get(i).getCallDuration();
         holder.number.setText(number);
-
+        Log.e("number", number);
+        Log.e("callType", callType);
+        Log.e("date", date);
+        Log.e("time", time);
+        Log.e("duration", duration);
         if (callType.equals("1")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_incoming_call_icon));
             if (duration.equals("0")) {
@@ -47,7 +52,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.incoming_call);
-                duration(duration,callType,holder);
+                duration(duration, callType, holder);
             }
         }
         if (callType.equals("2")) {
@@ -57,7 +62,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.outgoing_call);
-                duration(duration,callType,holder);
+                duration(duration, callType, holder);
             }
         }
         if (callType.equals("3")) {
@@ -106,17 +111,17 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
         }
 
     }
-    public void duration(String duration,String  callType,MyViewHolder holder){
+
+    public void duration(String duration, String callType, MyViewHolder holder) {
         if (!duration.equals("0")) {
-            if (!callType.equals("3")){
+            if (!callType.equals("3")) {
                 int second = Integer.parseInt(duration);
-                if (second > 60){
-                    int seconds = second%60;
-                    int diff = (second-seconds)/60;
-                    holder.duration.setText(diff+"m "+seconds+"sec");
-                }
-                else {
-                    holder.duration.setText(second+" sec");
+                if (second > 60) {
+                    int seconds = second % 60;
+                    int diff = (second - seconds) / 60;
+                    holder.duration.setText(diff + "m " + seconds + "sec");
+                } else {
+                    holder.duration.setText(second + " sec");
                 }
 
 

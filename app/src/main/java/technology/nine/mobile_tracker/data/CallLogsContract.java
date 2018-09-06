@@ -17,5 +17,13 @@ class CallLogsContract {
         static final String DURATION = "duration";
 
     }
+    static  class MessageLogsEntry implements  BaseColumns{
+        static  final  String TABLE_NAME = "SMSLogs";
+        static final String NAME = "name";
+        static final String PHONE_NUMBER = "phoneNumber";
+        static final String SMS_TYPE = "SMSType";
+        static final String DATE = "date";
+        static final String TIME = "time";
+    }
 }
 

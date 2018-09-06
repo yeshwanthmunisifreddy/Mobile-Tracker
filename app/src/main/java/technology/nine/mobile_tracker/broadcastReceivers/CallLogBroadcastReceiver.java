@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,6 +20,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;
+    private static Date answeringStartTime;
 
 
     @Override
@@ -89,7 +91,6 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
-                // Log.e("ringing", "is called");
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -99,19 +100,20 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
                     callStartTime = new Date();
                     //  Log.e("hook", "is called");
                     onOutgoingCallStarted(context, savedNumber, callStartTime);
-                }if (lastState == TelephonyManager.CALL_STATE_RINGING){
+                }
+                if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = true;
                     callStartTime = new Date();
-                    savedNumber = number;
-            }
+                }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
                 //Went to idle-  this is the end of a call.  What type depends on previous state(s)
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
+                    onMissedCall(context, savedNumber, callStartTime);
                     //Ring but no pickup-  a miss
                     //  Log.e("missed", "is called");
-                    onMissedCall(context, savedNumber, callStartTime);
                 } else if (isIncoming) {
+
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
                     //  Log.e("incomingRinging", "is called");
                 } else {
