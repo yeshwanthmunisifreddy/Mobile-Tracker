@@ -14,4 +14,9 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="calls">Calls</string>
+    <string name="messages">Messages</string>
+    <string name="notifications">Notifications</string>
+    <string name="share">Share</string>
+    <string name="info">Info</string>
 </resources>

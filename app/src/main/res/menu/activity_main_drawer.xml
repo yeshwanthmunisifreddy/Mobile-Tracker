@@ -3,19 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/group1">
         <item
             android:id="@+id/call_logs"
             android:icon="@drawable/ic_call_logs"
-            android:title="Calls" />
+            android:title="@string/calls" />
         <item
             android:id="@+id/message_logs"
             android:icon="@drawable/ic_message_logs"
-            android:title="Messages" />
+            android:title="@string/messages" />
         <item
             android:id="@+id/notification_logs"
             android:icon="@drawable/ic_notification_icon"
-            android:title="Notifications" />
-
+            android:title="@string/notifications" />
+    </group>
+    <group android:checkableBehavior="single"
+        android:id="@+id/group2">
+        <item
+            android:id="@+id/share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/share"/>
+        <item
+            android:id="@+id/info"
+            android:icon="@drawable/ic_info"
+            android:title="@string/info"/>
     </group>
 </menu>
