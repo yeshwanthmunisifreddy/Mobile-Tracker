@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.Telephony;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -31,6 +32,8 @@ public class MessageContentObserver extends ContentObserver {
     public static final String COLUMN_SUBJECT = "subject";
     public static final String COLUMN_BODY = "body";
     public static final String COLUMN_TYPE = "type";
+    public static final String UPDATE_SMS_LOGS_UI = "UpdateSmsLogsUi";
+
     public MessageContentObserver(Context context,CallLogsDBHelper helper) {
         super(new Handler());
         this.context = context;
@@ -59,6 +62,11 @@ public class MessageContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange, Uri uri) {
         super.onChange(selfChange, uri);
+
+    }
+    private void updateUi() {
+        LocalBroadcastManager.getInstance(context)
+                .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
 
     }
 
@@ -93,6 +101,7 @@ public class MessageContentObserver extends ContentObserver {
                         if (!helper.readSMSLogs(add,body, startDate,startTime)){
                             Log.e("ReadDate","is called");
                             helper.insertSMS(add,body,startTime,startDate,messageType);
+                            updateUi();
                         }
 
                     }

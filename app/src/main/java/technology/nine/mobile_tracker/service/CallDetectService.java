@@ -29,7 +29,7 @@ import technology.nine.mobile_tracker.model.CallLogs;
 import static android.provider.Telephony.Sms.Inbox.CONTENT_URI;
 
 public class CallDetectService extends Service {
-    public static final String UPDATE_UI = "UpdateUi";
+    public static final String UPDATE_CALL_LOGS_UI = "UpdateCallLogsUi";
     CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
     public CallDetectService() {
 
@@ -70,7 +70,7 @@ public class CallDetectService extends Service {
 
     public void updateUi() {
         LocalBroadcastManager.getInstance(getApplicationContext())
-                .sendBroadcast(new Intent(UPDATE_UI));
+                .sendBroadcast(new Intent(UPDATE_CALL_LOGS_UI));
 
     }
 

@@ -89,7 +89,7 @@ public class CallLogActivity extends AppCompatActivity {
         Log.e("onStart", "is called");
 
         LocalBroadcastManager.getInstance(getApplicationContext())
-                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_UI));
+                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_CALL_LOGS_UI));
 
     }
 

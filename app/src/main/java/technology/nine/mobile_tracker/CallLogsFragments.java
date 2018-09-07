@@ -59,7 +59,7 @@ public class CallLogsFragments extends Fragment {
         super.onStart();
         Log.e("onStart", "is called");
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
-                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_UI));
+                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_CALL_LOGS_UI));
     }
 
     @Override
@@ -78,5 +78,11 @@ public class CallLogsFragments extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(receiver);
     }
 }
