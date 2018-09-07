@@ -20,7 +20,6 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;
-    private static Date answeringStartTime;
 
 
     @Override
@@ -133,8 +132,6 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         String startDate = "";
         String startTime = " ";
-        String endDate = " ";
-        String endTime = " ";
         String t1 = " ";
         String t2 = " ";
         Date d1 = null;
@@ -144,22 +141,12 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
         if (start != null) {
             startDate = dateFormat.format(start);
             startTime = timeFormat.format(start);
-            t1 = dateFormat1.format(start);
-            // Log.e("T1", t1);
-
-        }
-        if (end != null) {
-            endDate = dateFormat.format(end);
-            endTime = timeFormat.format(end);
-            t2 = dateFormat1.format(end);
-            // Log.e("T2", t1);
         }
         if (start != null && end != null) {
             try {
                 d1 = format.parse(dateFormat1.format(start));
                 d2 = format.parse(dateFormat1.format(end));
                 diff = d2.getTime() - d1.getTime();
-                // Log.e("Diff ", String.valueOf(diff));
                 int minutes = (int) (diff / (60 * 1000) % 60);
                 if (minutes != 0) {
                     duration = (diff / (60 * 1000) % 60) + "m" + " " + (diff / 1000 % 60) + "sec";

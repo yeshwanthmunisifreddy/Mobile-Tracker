@@ -7,7 +7,7 @@ class CallLogsContract {
     }
     //CallLogs constant fields
     static class CallLogsEntry implements BaseColumns {
-        static final String TABLE_NAME = "callLogs";
+        static  final  String SMS_TABLE_NAME = "SMSLogs";
         static final String CALL_LOG_TABLE_NAME = "CallLog";
         static  final String NAME = "name";
         static final String NUMBER = "number";
@@ -15,15 +15,9 @@ class CallLogsContract {
         static final String DATE = "date";
         static final String TIME = "time";
         static final String DURATION = "duration";
+        static  final String BODY = "body";
+        static  final String SMS_TYPE = "SmsType";
 
-    }
-    static  class MessageLogsEntry implements  BaseColumns{
-        static  final  String TABLE_NAME = "SMSLogs";
-        static final String NAME = "name";
-        static final String PHONE_NUMBER = "phoneNumber";
-        static final String SMS_TYPE = "SMSType";
-        static final String DATE = "date";
-        static final String TIME = "time";
     }
 }
 

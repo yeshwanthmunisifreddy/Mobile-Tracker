@@ -34,17 +34,8 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
-        String number = callLogs.get(i).getPhoneNumber();
         String callType = callLogs.get(i).getCalltype();
-        String date = callLogs.get(i).getCallDate();
-        String time = callLogs.get(i).getCallTime();
         String duration = callLogs.get(i).getCallDuration();
-        holder.number.setText(number);
-        Log.e("number", number);
-        Log.e("callType", callType);
-        Log.e("date", date);
-        Log.e("time", time);
-        Log.e("duration", duration);
         if (callType.equals("1")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_incoming_call_icon));
             if (duration.equals("0")) {
@@ -52,7 +43,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.incoming_call);
-                duration(duration, callType, holder);
+                duration(duration,callType,holder);
             }
         }
         if (callType.equals("2")) {
@@ -62,7 +53,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.outgoing_call);
-                duration(duration, callType, holder);
+                duration(duration,callType,holder);
             }
         }
         if (callType.equals("3")) {
@@ -71,9 +62,9 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
             holder.duration.setText(" ");
 
         }
-        holder.date.setText(date);
-        holder.time.setText(time);
-
+        holder.number.setText(callLogs.get(i).getPhoneNumber());
+        holder.date.setText( callLogs.get(i).getCallDate());
+        holder.time.setText(callLogs.get(i).getCallTime());
     }
 
     @Override

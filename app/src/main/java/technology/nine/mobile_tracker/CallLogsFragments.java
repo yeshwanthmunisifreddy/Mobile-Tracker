@@ -37,11 +37,6 @@ public class CallLogsFragments extends Fragment {
     CallLogsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     List<CallLogs> callLogs = new ArrayList<>();
-    private static final int READ_CALL_LOG_PERMISSION_CONSTANT = 100;
-    private static final int REQUEST_PERMISSION_SETTING = 101;
-    private boolean sentToSettings = false;
-    private SharedPreferences permissionStatus;
-    Intent mServiceIntent;
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

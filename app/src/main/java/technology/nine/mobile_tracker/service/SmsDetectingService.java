@@ -15,17 +15,19 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.os.Process;
 import technology.nine.mobile_tracker.MessageContentObserver;
+import technology.nine.mobile_tracker.data.CallLogsDBHelper;
 
 public class SmsDetectingService extends Service {
     public static final String serviceIntent = "custom.SMS_SERVICE";
     private Handler handler = new Handler();
+    CallLogsDBHelper helper = new CallLogsDBHelper(SmsDetectingService.this);
     public SmsDetectingService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        this.getApplicationContext().getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, new MessageContentObserver(this));
+        this.getApplicationContext().getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, new MessageContentObserver(this,helper));
 
     }
 
@@ -46,7 +48,7 @@ public class SmsDetectingService extends Service {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("technology.nine.mobile_tracker.SMS_SERVICE");
         sendBroadcast(broadcastIntent);
-        getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext()));
+        getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext(),helper));
 
     }
 
@@ -57,7 +59,7 @@ public class SmsDetectingService extends Service {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("technology.nine.mobile_tracker.SMS_SERVICE");
         sendBroadcast(broadcastIntent);
-        getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext()));
+        getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext(),helper));
 
     }
 
