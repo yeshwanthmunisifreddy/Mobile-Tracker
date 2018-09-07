@@ -3,34 +3,22 @@ package technology.nine.mobile_tracker.service;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.SmsManager;
-import android.util.Log;
-
-import java.security.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import technology.nine.mobile_tracker.data.CallLogsDBHelper;
-import technology.nine.mobile_tracker.model.CallLogs;
-
-import static android.provider.Telephony.Sms.Inbox.CONTENT_URI;
 
 public class CallDetectService extends Service {
     public static final String UPDATE_CALL_LOGS_UI = "UpdateCallLogsUi";
     CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
+
     public CallDetectService() {
 
     }
@@ -77,7 +65,7 @@ public class CallDetectService extends Service {
     private void readDate(String startDate, String startTime) {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-           Cursor cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC limit 1");
+            Cursor cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC limit 1");
             if (cursor != null) {
                 try {
                     while (cursor.moveToNext()) {

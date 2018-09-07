@@ -1,4 +1,4 @@
-package technology.nine.mobile_tracker;
+package technology.nine.mobile_tracker.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import technology.nine.mobile_tracker.R;
 
 public class NotificationLogFragment extends Fragment {
     View view;

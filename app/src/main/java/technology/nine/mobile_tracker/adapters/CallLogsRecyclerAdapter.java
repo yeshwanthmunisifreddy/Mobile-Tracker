@@ -3,7 +3,6 @@ package technology.nine.mobile_tracker.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
-        String callType = callLogs.get(i).getCalltype();
+        String callType = callLogs.get(i).getCallType();
         String duration = callLogs.get(i).getCallDuration();
         if (callType.equals("1")) {
             holder.callTypeIcon.setImageDrawable(context.getDrawable(R.drawable.ic_incoming_call_icon));
@@ -43,7 +42,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.incoming_call);
-                duration(duration,callType,holder);
+                duration(duration, callType, holder);
             }
         }
         if (callType.equals("2")) {
@@ -53,7 +52,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
                 holder.duration.setText(" ");
             } else {
                 holder.callType.setText(R.string.outgoing_call);
-                duration(duration,callType,holder);
+                duration(duration, callType, holder);
             }
         }
         if (callType.equals("3")) {
@@ -63,7 +62,7 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
 
         }
         holder.number.setText(callLogs.get(i).getPhoneNumber());
-        holder.date.setText( callLogs.get(i).getCallDate());
+        holder.date.setText(callLogs.get(i).getCallDate());
         holder.time.setText(callLogs.get(i).getCallTime());
     }
 

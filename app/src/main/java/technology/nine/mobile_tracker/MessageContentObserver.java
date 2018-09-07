@@ -5,22 +5,16 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import technology.nine.mobile_tracker.data.CallLogsDBHelper;
-import technology.nine.mobile_tracker.service.CallDetectService;
-import technology.nine.mobile_tracker.service.SmsDetectingService;
 
 public class MessageContentObserver extends ContentObserver {
     private Context context;
@@ -72,8 +66,6 @@ public class MessageContentObserver extends ContentObserver {
 
     private void insertSmsDatabase() {
         try {
-
-
             Cursor cursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, " date DESC LIMIT  1 ");
             if (cursor != null) {
                 try {
@@ -82,9 +74,6 @@ public class MessageContentObserver extends ContentObserver {
                         String add = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)); //phone num
                         long date = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE)); //date
                         String type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
-                        String dateSent = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_SENT));
-                        String subject = cursor.getString(cursor.getColumnIndex(COLUMN_SUBJECT));
-                        String protocol = cursor.getString(cursor.getColumnIndex(COLUMN_PROTOCOL));
                         String  messageType = null;
                         if (type .equals("1")){
                             messageType = "Sent";
@@ -93,15 +82,16 @@ public class MessageContentObserver extends ContentObserver {
                             messageType = "Received";
                         }
                         Date d1 = new Date(date);
-                        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                            DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+
                         DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
                         String startDate = dateFormat.format(d1);
                         String startTime = timeFormat.format(d1);
-                        Log.e("Message",body +" "+add + " "+ startDate +" "+ startTime + type + " "+ messageType);
                         if (!helper.readSMSLogs(add,body, startDate,startTime)){
-                            Log.e("ReadDate","is called");
-                            helper.insertSMS(add,body,startTime,startDate,messageType);
-                            updateUi();
+                          if ( helper.insertSMS(add,body,startTime,startDate,messageType)){
+                              updateUi();
+                          }
+
                         }
 
                     }

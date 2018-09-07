@@ -12,14 +12,7 @@ import java.util.List;
 
 import technology.nine.mobile_tracker.model.CallLogs;
 import technology.nine.mobile_tracker.model.SmsLogs;
-import technology.nine.mobile_tracker.model.UserData;
 
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_ADDRESS;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_BODY;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_DATE;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_DATE_SENT;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_PROTOCOL;
-import static technology.nine.mobile_tracker.data.CallLogsContract.*;
 import static technology.nine.mobile_tracker.data.CallLogsContract.CallLogsEntry.*;
 import static technology.nine.mobile_tracker.data.CallLogsContract.CallLogsEntry.TIME;
 
@@ -31,7 +24,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    String SQL_CREATE_CALL_LOG_TABLE = " CREATE TABLE " + CALL_LOG_TABLE_NAME + "(" +
+    private String SQL_CREATE_CALL_LOG_TABLE = " CREATE TABLE " + CALL_LOG_TABLE_NAME + "(" +
             _ID + " INTERGER PRIMARY KEY, " +
             NAME + " TEXT, " +
             NUMBER + " TEXT, " +
@@ -39,7 +32,8 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
             DATE + " Text, " +
             TIME + " TEXT, " +
             DURATION + " Text);";
-    String SQL_CREATE_SMS_TABLE = " CREATE TABLE " + SMS_TABLE_NAME + "(" +
+
+    private String SQL_CREATE_SMS_TABLE = " CREATE TABLE " + SMS_TABLE_NAME + "(" +
             _ID + " INTERGER PRIMARY KEY, " +
             NUMBER + " TEXT, " +
             BODY + " TEXT, " +

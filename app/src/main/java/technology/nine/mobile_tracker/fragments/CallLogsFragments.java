@@ -1,4 +1,4 @@
-package technology.nine.mobile_tracker;
+package technology.nine.mobile_tracker.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,20 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.CallLogsRecyclerAdapter;
-import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.CallLogsDBHelper;
 import technology.nine.mobile_tracker.model.CallLogs;
-import technology.nine.mobile_tracker.model.SmsLogs;
 import technology.nine.mobile_tracker.service.CallDetectService;
 
-public class MessageLogFragment extends Fragment {
+public class CallLogsFragments extends Fragment {
     View view;
     CallLogsDBHelper helper;
     RecyclerView recyclerView;
-    SmsRecyclerAdapter adapter;
+    CallLogsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
-    List<SmsLogs> smsLogs= new ArrayList<>();
+    List<CallLogs> callLogs = new ArrayList<>();
+
+    //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -41,34 +42,46 @@ public class MessageLogFragment extends Fragment {
             fetch(context);
         }
     };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_call_log,container,false);
+        view = inflater.inflate(R.layout.activity_call_log, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
         return view;
     }
+
     @Override
     public void onStart() {
         super.onStart();
+        //registration of Local Broadcast
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
-                .registerReceiver(receiver, new IntentFilter(MessageContentObserver.UPDATE_SMS_LOGS_UI));
+                .registerReceiver(receiver, new IntentFilter(CallDetectService.UPDATE_CALL_LOGS_UI));
     }
+
     @Override
     public void onResume() {
         super.onResume();
         fetch(getContext());
     }
-
-    private void fetch(Context context){
+    //load Call Logs  data from database into recycler view
+    private void fetch(Context context) {
         helper = new CallLogsDBHelper(context);
-        smsLogs =helper.getAllSMS();
+        callLogs = helper.getAllCallLog();
         linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new SmsRecyclerAdapter(context);
+        adapter = new CallLogsRecyclerAdapter(context);
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter.addAll(smsLogs);
+        adapter.addAll(callLogs);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //unRegistration of Local Broadcast
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(receiver);
     }
 }

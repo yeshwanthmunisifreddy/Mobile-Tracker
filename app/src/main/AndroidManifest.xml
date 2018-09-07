@@ -65,6 +65,10 @@
                 <action android:name="custom.SMS_SERVICE" />
             </intent-filter>
         </service>
+        <service android:name=".service.SmsJobService"
+            android:exported="false"
+            android:enabled="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
     </application>
 
