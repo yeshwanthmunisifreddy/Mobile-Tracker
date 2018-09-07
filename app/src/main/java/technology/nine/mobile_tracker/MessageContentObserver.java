@@ -24,6 +24,13 @@ import technology.nine.mobile_tracker.service.SmsDetectingService;
 public class MessageContentObserver extends ContentObserver {
     private Context context;
     private  CallLogsDBHelper helper ;
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_DATE_SENT = "date_sent";
+    public static final String COLUMN_PROTOCOL = "protocol";
+    public static final String COLUMN_SUBJECT = "subject";
+    public static final String COLUMN_BODY = "body";
+    public static final String COLUMN_TYPE = "type";
     public MessageContentObserver(Context context,CallLogsDBHelper helper) {
         super(new Handler());
         this.context = context;
@@ -33,12 +40,7 @@ public class MessageContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
-
-    }
-
-    @Override
-    public void onChange(boolean selfChange, Uri uri) {
-        super.onChange(selfChange, uri);
+        Log.e("OnChange","is called");
         try {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -54,6 +56,12 @@ public class MessageContentObserver extends ContentObserver {
 
     }
 
+    @Override
+    public void onChange(boolean selfChange, Uri uri) {
+        super.onChange(selfChange, uri);
+
+    }
+
     private void insertSmsDatabase() {
         try {
 
@@ -62,10 +70,13 @@ public class MessageContentObserver extends ContentObserver {
             if (cursor != null) {
                 try {
                     while (cursor.moveToNext()) {
-                        String body = cursor.getString(cursor.getColumnIndex("body")); //content of sms
-                        String add = cursor.getString(cursor.getColumnIndex("address")); //phone num
-                        long date = cursor.getLong(cursor.getColumnIndex("date")); //date
-                        String type = cursor.getString(cursor.getColumnIndex("type"));
+                        String body = cursor.getString(cursor.getColumnIndex(COLUMN_BODY)); //content of sms
+                        String add = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)); //phone num
+                        long date = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE)); //date
+                        String type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
+                        String dateSent = cursor.getString(cursor.getColumnIndex(COLUMN_DATE_SENT));
+                        String subject = cursor.getString(cursor.getColumnIndex(COLUMN_SUBJECT));
+                        String protocol = cursor.getString(cursor.getColumnIndex(COLUMN_PROTOCOL));
                         String  messageType = null;
                         if (type .equals("1")){
                             messageType = "Sent";
@@ -79,7 +90,11 @@ public class MessageContentObserver extends ContentObserver {
                         String startDate = dateFormat.format(d1);
                         String startTime = timeFormat.format(d1);
                         Log.e("Message",body +" "+add + " "+ startDate +" "+ startTime + type + " "+ messageType);
-                        helper.insertSMS(add,body,startTime,startDate,messageType);
+                        if (!helper.readSMSLogs(add,body, startDate,startTime)){
+                            Log.e("ReadDate","is called");
+                            helper.insertSMS(add,body,startTime,startDate,messageType);
+                        }
+
                     }
                 } finally {
                     cursor.close();

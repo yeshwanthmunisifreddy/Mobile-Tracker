@@ -7,7 +7,7 @@ public class SmsLogs {
     private String date;
     private String messageType;
 
-    public SmsLogs(String phoneNumber, String messageBody, String time, String date,String messageType ) {
+    public SmsLogs(String phoneNumber, String messageBody, String time, String date, String messageType) {
         this.phoneNumber = phoneNumber;
         this.messageBody = messageBody;
         this.time = time;
@@ -15,7 +15,6 @@ public class SmsLogs {
         this.messageType = messageType;
 
     }
-
 
     public String getPhoneNumber() {
         return phoneNumber;
