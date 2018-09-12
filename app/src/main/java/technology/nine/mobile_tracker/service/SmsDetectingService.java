@@ -8,10 +8,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import technology.nine.mobile_tracker.MessageContentObserver;
-import technology.nine.mobile_tracker.data.CallLogsDBHelper;
+import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 public class SmsDetectingService extends Service {
-    CallLogsDBHelper helper = new CallLogsDBHelper(SmsDetectingService.this);
+    LogsDBHelper helper = new LogsDBHelper(SmsDetectingService.this);
 
     public SmsDetectingService() {
     }

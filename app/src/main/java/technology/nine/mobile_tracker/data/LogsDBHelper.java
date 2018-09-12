@@ -8,24 +8,25 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import technology.nine.mobile_tracker.model.CallLogs;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
-import static technology.nine.mobile_tracker.data.CallLogsContract.CallLogsEntry.*;
-import static technology.nine.mobile_tracker.data.CallLogsContract.CallLogsEntry.TIME;
+import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.*;
+import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.TIME;
 
-public class CallLogsDBHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "callLogs.db";
+public class LogsDBHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "Logs.db";
     private static final int DATABASE_VERSION = 1;
 
-    public CallLogsDBHelper(Context context) {
+    public LogsDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     private String SQL_CREATE_CALL_LOG_TABLE = " CREATE TABLE " + CALL_LOG_TABLE_NAME + "(" +
-            _ID + " INTERGER PRIMARY KEY, " +
+            _ID + " INTEGER PRIMARY KEY, " +
             NAME + " TEXT, " +
             NUMBER + " TEXT, " +
             CALL_TYPE + " TEXT, " +
@@ -34,25 +35,33 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
             DURATION + " Text);";
 
     private String SQL_CREATE_SMS_TABLE = " CREATE TABLE " + SMS_TABLE_NAME + "(" +
-            _ID + " INTERGER PRIMARY KEY, " +
+            _ID + " INTEGER PRIMARY KEY, " +
             NUMBER + " TEXT, " +
             BODY + " TEXT, " +
             SMS_TYPE + " TEXT, " +
             DATE + " Text, " +
             TIME + " TEXT);";
 
+    private String SQL_CREATE_NOTIFICATION_TABLE = " CREATE TABLE " + NOTIFICATION_TABLE_NAME + "(" +
+            _ID + " INTEGER PRIMARY KEY, " +
+            PACKAGE_NAME + " TEXT, " +
+            TITLE + " TEXT, " +
+            TEXT + " TEXT, " +
+            DATE + " TEXT, " +
+            IMAGE + " BLOB);";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(SQL_CREATE_CALL_LOG_TABLE);
         db.execSQL(SQL_CREATE_SMS_TABLE);
+        db.execSQL(SQL_CREATE_NOTIFICATION_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
-    //getting data from Calls.Content_URI and inserting call logs into Call Log Database table
+    // Inserting Call logs into Database
     public boolean insertCallLog(String name, String phoneNumber, String callType, String date, String time, String duration) {
         SQLiteDatabase writableDatabase = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -65,6 +74,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
         return (writableDatabase.insert(CALL_LOG_TABLE_NAME, null, values) != -1);
     }
 
+    // Insert SMS data into Database
     public boolean insertSMS(String phoneNumber, String body, String time, String date, String type) {
         SQLiteDatabase writableDatabase = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -77,7 +87,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
 
     }
 
-    //reading data from the table CallLog from database
+    //Reading data from Database
     public List<CallLogs> getAllCallLog() {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
         List<CallLogs> callLogs = new ArrayList<>();
@@ -106,6 +116,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
         return callLogs;
     }
 
+    //Reading SMS from Database
     public List<SmsLogs> getAllSMS() {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
         List<SmsLogs> smsLogs = new ArrayList<>();
@@ -133,6 +144,7 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
         return smsLogs;
     }
 
+    //Check if sms is already added to Database
     public boolean readSMSLogs(String number, String body, String date, String time) {
         boolean returnValue = false;
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
@@ -154,5 +166,36 @@ public class CallLogsDBHelper extends SQLiteOpenHelper {
         return returnValue;
 
 
+    }
+
+    //Inserting Notifications into Database
+    public boolean insertNotifications(String packageName, String title, String text, String date,byte[] image) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(PACKAGE_NAME, packageName);
+        values.put(TITLE, title);
+        values.put(TEXT, text);
+        values.put(DATE, date);
+        values.put(IMAGE,image);
+        return (db.insert(NOTIFICATION_TABLE_NAME, null, values) != -1);
+    }
+    //Check if Notification is already added to Database
+    public boolean readNotifications(String packageName, String title, String text, String date) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean retrunValue = false;
+        String selection = PACKAGE_NAME + " = ?" + " AND " + TITLE + " = ?" + " AND " + TEXT + " = ?" + " AND " + DATE + " = ?";
+        String[] selectionArgs = new String[]{packageName, title, text, date};
+        Cursor cursor = db.query(NOTIFICATION_TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+        if (cursor.getCount() != 0) {
+            retrunValue = true;
+            cursor.close();
+        }
+        return retrunValue;
     }
 }

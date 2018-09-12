@@ -14,11 +14,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import technology.nine.mobile_tracker.data.CallLogsDBHelper;
+import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 public class MessageContentObserver extends ContentObserver {
     private Context context;
-    private  CallLogsDBHelper helper ;
+    private LogsDBHelper helper ;
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_DATE_SENT = "date_sent";
@@ -28,7 +28,7 @@ public class MessageContentObserver extends ContentObserver {
     public static final String COLUMN_TYPE = "type";
     public static final String UPDATE_SMS_LOGS_UI = "UpdateSmsLogsUi";
 
-    public MessageContentObserver(Context context,CallLogsDBHelper helper) {
+    public MessageContentObserver(Context context,LogsDBHelper helper) {
         super(new Handler());
         this.context = context;
         this.helper = helper;

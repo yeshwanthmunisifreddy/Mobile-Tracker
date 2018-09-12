@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +21,13 @@ import java.util.Objects;
 
 import technology.nine.mobile_tracker.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
-import technology.nine.mobile_tracker.adapters.CallLogsRecyclerAdapter;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
-import technology.nine.mobile_tracker.data.CallLogsDBHelper;
-import technology.nine.mobile_tracker.model.CallLogs;
+import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
-import technology.nine.mobile_tracker.service.CallDetectService;
 
 public class MessageLogFragment extends Fragment {
     View view;
-    CallLogsDBHelper helper;
+    LogsDBHelper helper;
     RecyclerView recyclerView;
     SmsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
@@ -76,7 +72,7 @@ public class MessageLogFragment extends Fragment {
 
     //load Sms  data from database into recycler view
     private void fetch(Context context) {
-        helper = new CallLogsDBHelper(context);
+        helper = new LogsDBHelper(context);
         smsLogs = helper.getAllSMS();
         linearLayoutManager = new LinearLayoutManager(context);
         adapter = new SmsRecyclerAdapter(context);

@@ -13,11 +13,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-import technology.nine.mobile_tracker.data.CallLogsDBHelper;
+import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 public class CallDetectService extends Service {
     public static final String UPDATE_CALL_LOGS_UI = "UpdateCallLogsUi";
-    CallLogsDBHelper helper = new CallLogsDBHelper(CallDetectService.this);
+    LogsDBHelper helper = new LogsDBHelper(CallDetectService.this);
 
     public CallDetectService() {
 

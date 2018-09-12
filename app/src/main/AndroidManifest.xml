@@ -23,6 +23,7 @@
         <activity android:name=".MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -71,6 +72,13 @@
             android:exported="false"
             android:enabled="true"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".service.NotificationService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+
+            </intent-filter>
+        </service>
 
     </application>
 

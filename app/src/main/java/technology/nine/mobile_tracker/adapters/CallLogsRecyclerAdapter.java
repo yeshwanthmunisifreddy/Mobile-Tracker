@@ -72,13 +72,8 @@ public class CallLogsRecyclerAdapter extends RecyclerView.Adapter<CallLogsRecycl
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView number;
-        TextView callType;
+        TextView number,callType,date,time,duration;
         ImageView callTypeIcon;
-        TextView date;
-        TextView time;
-        TextView duration;
-
         MyViewHolder(@NonNull View itemView) {
             super(itemView);
             number = itemView.findViewById(R.id.phone_number);

@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity
                     .addTriggerContentUri(new JobInfo.TriggerContentUri(
                             Telephony.Sms.CONTENT_URI,
                             JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS));
-            builder.setMinimumLatency(2000);
+            builder.setMinimumLatency(0);
             JOB_INFO = builder.build();
             assert jobScheduler != null;
             jobScheduler.schedule(JOB_INFO);

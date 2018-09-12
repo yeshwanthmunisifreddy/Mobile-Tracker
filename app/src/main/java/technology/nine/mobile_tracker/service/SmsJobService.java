@@ -12,7 +12,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import technology.nine.mobile_tracker.data.CallLogsDBHelper;
+import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_ADDRESS;
 import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_BODY;
@@ -21,7 +21,7 @@ import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_TYPE;
 import static technology.nine.mobile_tracker.MessageContentObserver.UPDATE_SMS_LOGS_UI;
 
 public class SmsJobService extends JobService {
-    CallLogsDBHelper helper = new CallLogsDBHelper(SmsJobService.this);
+    LogsDBHelper helper = new LogsDBHelper(SmsJobService.this);
     public SmsJobService() {
     }
     @Override

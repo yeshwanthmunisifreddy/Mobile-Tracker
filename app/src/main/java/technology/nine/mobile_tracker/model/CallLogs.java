@@ -1,12 +1,7 @@
 package technology.nine.mobile_tracker.model;
 
 public class CallLogs {
-    private  String name;
-    private String phoneNumber;
-    private String callType;
-    private String callDate;
-    private String callTime;
-    private String callDuration;
+    private String name, phoneNumber,callType,callDate,callTime,callDuration;
 
     public CallLogs(String name, String phoneNumber, String callType, String callDate, String callTime, String callDuration) {
         this.name = name;
