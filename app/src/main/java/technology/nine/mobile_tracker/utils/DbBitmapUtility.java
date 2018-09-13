@@ -1,4 +1,4 @@
-package technology.nine.mobile_tracker;
+package technology.nine.mobile_tracker.utils;
 
         import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;

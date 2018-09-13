@@ -1,4 +1,4 @@
-package technology.nine.mobile_tracker;
+package technology.nine.mobile_tracker.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -44,7 +44,7 @@ public class MessageContentObserver extends ContentObserver {
                 public void run() {
                     insertSmsDatabase();
                 }
-            }, 2000);
+            }, 3000);
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
@@ -74,11 +74,12 @@ public class MessageContentObserver extends ContentObserver {
                         String body = cursor.getString(cursor.getColumnIndex(COLUMN_BODY)); //content of sms
                         String add = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)); //phone num
                         long date = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE)); //date
+                        Log.e("add",add);
                         String type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
                         String  messageType = null;
-                        if (type .equals("1")){
+                        if (type .equals("2")){
                             messageType = "Sent";
-                        }if (type.equals("2"))
+                        }if (type.equals("1"))
                         {
                             messageType = "Received";
                         }

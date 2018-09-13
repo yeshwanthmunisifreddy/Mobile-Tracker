@@ -1,5 +1,6 @@
 package technology.nine.mobile_tracker.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,21 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-import technology.nine.mobile_tracker.MessageContentObserver;
+import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
-import technology.nine.mobile_tracker.model.SmsLog;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 public class MessageLogFragment extends Fragment {
+    public static final String UPDATE_ALL_SMS_PER_USER = "updateAllSmsEveryUser";
     View view;
     LogsDBHelper helper;
     RecyclerView recyclerView;
@@ -42,7 +39,6 @@ public class MessageLogFragment extends Fragment {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("UpdateBroadcast","is called");
             fetch(context);
         }
     };
@@ -87,5 +83,12 @@ public class MessageLogFragment extends Fragment {
         adapter.addAll(smsLogs);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        updateUi();
+
+    }
+    private void updateUi() {
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
+                .sendBroadcast(new Intent(UPDATE_ALL_SMS_PER_USER));
+
     }
 }

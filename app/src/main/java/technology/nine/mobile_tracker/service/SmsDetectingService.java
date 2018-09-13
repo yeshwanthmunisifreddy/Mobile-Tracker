@@ -7,7 +7,7 @@ import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import technology.nine.mobile_tracker.MessageContentObserver;
+import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 public class SmsDetectingService extends Service {

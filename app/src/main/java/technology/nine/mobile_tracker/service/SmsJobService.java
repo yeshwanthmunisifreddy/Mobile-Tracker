@@ -14,11 +14,11 @@ import java.util.Date;
 
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_ADDRESS;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_BODY;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_DATE;
-import static technology.nine.mobile_tracker.MessageContentObserver.COLUMN_TYPE;
-import static technology.nine.mobile_tracker.MessageContentObserver.UPDATE_SMS_LOGS_UI;
+import static technology.nine.mobile_tracker.utils.MessageContentObserver.COLUMN_ADDRESS;
+import static technology.nine.mobile_tracker.utils.MessageContentObserver.COLUMN_BODY;
+import static technology.nine.mobile_tracker.utils.MessageContentObserver.COLUMN_DATE;
+import static technology.nine.mobile_tracker.utils.MessageContentObserver.COLUMN_TYPE;
+import static technology.nine.mobile_tracker.utils.MessageContentObserver.UPDATE_SMS_LOGS_UI;
 
 public class SmsJobService extends JobService {
     LogsDBHelper helper = new LogsDBHelper(SmsJobService.this);

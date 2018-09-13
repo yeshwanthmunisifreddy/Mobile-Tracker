@@ -12,9 +12,8 @@ import android.util.Log;
 import java.util.Date;
 import java.util.Objects;
 
-import technology.nine.mobile_tracker.DbBitmapUtility;
+import technology.nine.mobile_tracker.utils.DbBitmapUtility;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
-
 
 public class NotificationService extends NotificationListenerService {
     LogsDBHelper helper = new LogsDBHelper(NotificationService.this);
@@ -50,9 +49,6 @@ public class NotificationService extends NotificationListenerService {
             if (extras.get(Notification.EXTRA_TITLE) != null) {
                 title = Objects.requireNonNull(extras.get(Notification.EXTRA_TITLE)).toString();
             }
-            if (title == null){
-                title = "unknown";
-            }
             String text = null;
             if (extras.get(Notification.EXTRA_TEXT) != null) {
                 text = Objects.requireNonNull(extras.get(Notification.EXTRA_TEXT)).toString();
@@ -87,4 +83,3 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 }
-

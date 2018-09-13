@@ -12,7 +12,6 @@ public class SmsLogs {
         this.messageType = messageType;
 
     }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }

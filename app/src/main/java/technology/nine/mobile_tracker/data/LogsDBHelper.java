@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import technology.nine.mobile_tracker.model.CallLogs;
-import technology.nine.mobile_tracker.model.SmsLog;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.*;
@@ -123,7 +122,6 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     //Reading SMS from Database
     public List<SmsLogs> getAllSMS() {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
-        ArrayList<SmsLog> arrayLists = new ArrayList<>();
         List<SmsLogs> smsLogss = new ArrayList<>();
         LinkedHashMap<String, ArrayList<SmsLogs>> smsLogs = new LinkedHashMap<>();
         Cursor cursor = readableDatabase.query(SMS_TABLE_NAME,
@@ -219,6 +217,33 @@ public class LogsDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return retrunValue;
+    }
+    public  List<SmsLogs>  getAllEachNumber(String number){
+        SQLiteDatabase readableDatabase = this.getReadableDatabase();
+        List<SmsLogs> smsLogs = new ArrayList<>();
+        String selection = NUMBER + " = ?";
+        String[] selectionArgs =  new String[]{number};
+        Cursor cursor = readableDatabase.query(SMS_TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        try {
+            while (cursor.moveToNext()) {
+                String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow(NUMBER));
+                String body = cursor.getString(cursor.getColumnIndexOrThrow(BODY));
+                String time = cursor.getString(cursor.getColumnIndexOrThrow(TIME));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow(SMS_TYPE));
+                smsLogs.add(new SmsLogs(phoneNumber,body,time,date,type));
+            }
+        }finally {
+            cursor.close();
+        }
+        return smsLogs;
     }
 
 }
