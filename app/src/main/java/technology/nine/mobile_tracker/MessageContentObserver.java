@@ -59,6 +59,7 @@ public class MessageContentObserver extends ContentObserver {
 
     }
     private void updateUi() {
+        Log.e("UpDateService","is called");
         LocalBroadcastManager.getInstance(context)
                 .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
 
@@ -89,6 +90,7 @@ public class MessageContentObserver extends ContentObserver {
                         String startTime = timeFormat.format(d1);
                         if (!helper.readSMSLogs(add,body, startDate,startTime)){
                           if ( helper.insertSMS(add,body,startTime,startDate,messageType)){
+                              Log.e("UpdateInsert","is called");
                               updateUi();
                           }
 

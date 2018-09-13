@@ -8,10 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import technology.nine.mobile_tracker.model.CallLogs;
+import technology.nine.mobile_tracker.model.SmsLog;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.*;
@@ -119,7 +123,9 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     //Reading SMS from Database
     public List<SmsLogs> getAllSMS() {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
-        List<SmsLogs> smsLogs = new ArrayList<>();
+        ArrayList<SmsLog> arrayLists = new ArrayList<>();
+        List<SmsLogs> smsLogss = new ArrayList<>();
+        LinkedHashMap<String, ArrayList<SmsLogs>> smsLogs = new LinkedHashMap<>();
         Cursor cursor = readableDatabase.query(SMS_TABLE_NAME,
                 null,
                 null,
@@ -135,14 +141,30 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 String time = cursor.getString(cursor.getColumnIndexOrThrow(TIME));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow(SMS_TYPE));
-                smsLogs.add(new SmsLogs(number, body, time, date, type));
+
+                if (smsLogs.containsKey(number)) {
+
+                } else {
+                    ArrayList<SmsLogs> messages = new ArrayList<>();
+                    messages.add(new SmsLogs(number, body, time, date, type));
+                    smsLogs.put(number, messages);
+                }
 
             }
         } finally {
+            Set s = smsLogs.entrySet();
+            Iterator iterator = s.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry m1 = (Map.Entry) iterator.next();
+                ArrayList<SmsLogs> smsLogs1 = (ArrayList<SmsLogs>) m1.getValue();
+                smsLogss.addAll(smsLogs1);
+            }
             cursor.close();
+
         }
-        return smsLogs;
+        return smsLogss;
     }
+
 
     //Check if sms is already added to Database
     public boolean readSMSLogs(String number, String body, String date, String time) {
@@ -158,7 +180,6 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
-        Log.e("CursorValue", String.valueOf(cursor.getCount()));
         if (cursor.getCount() != 0) {
             returnValue = true;
             cursor.close();
@@ -169,16 +190,17 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     }
 
     //Inserting Notifications into Database
-    public boolean insertNotifications(String packageName, String title, String text, String date,byte[] image) {
+    public boolean insertNotifications(String packageName, String title, String text, String date, byte[] image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(PACKAGE_NAME, packageName);
         values.put(TITLE, title);
         values.put(TEXT, text);
         values.put(DATE, date);
-        values.put(IMAGE,image);
+        values.put(IMAGE, image);
         return (db.insert(NOTIFICATION_TABLE_NAME, null, values) != -1);
     }
+
     //Check if Notification is already added to Database
     public boolean readNotifications(String packageName, String title, String text, String date) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -198,4 +220,5 @@ public class LogsDBHelper extends SQLiteOpenHelper {
         }
         return retrunValue;
     }
+
 }

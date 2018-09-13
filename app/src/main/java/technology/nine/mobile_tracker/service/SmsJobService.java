@@ -65,6 +65,7 @@ public class SmsJobService extends JobService {
                         String startTime = timeFormat.format(d1);
                         if (!helper.readSMSLogs(add, body, startDate, startTime)) {
                             if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
+                                Log.e("UpdateFunction","is called");
                                 updateUi();
                             }
                         }
@@ -80,6 +81,7 @@ public class SmsJobService extends JobService {
     }
 
     private void updateUi() {
+        Log.e("Update","is called");
         LocalBroadcastManager.getInstance(this)
                 .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
 

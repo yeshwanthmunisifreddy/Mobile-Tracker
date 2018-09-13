@@ -68,14 +68,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //start background service
-        if (Build.VERSION.SDK_INT < 24) {
+
             if (!isMyServiceRunning(SmsDetectingService.class)) {
                 mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
-                startService(mServiceIntent);
+                if (Build.VERSION.SDK_INT >= 26) {
+                    startForegroundService(mServiceIntent);
+                } else {
+                    startService(mServiceIntent);
+                }
             }
-        } else {
-            jobScheduler();
-        }
+
         //loading default fragment
         if (savedInstanceState == null) {
             MenuItem item = navigationView.getMenu().getItem(0);

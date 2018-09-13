@@ -11,18 +11,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import technology.nine.mobile_tracker.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
+import technology.nine.mobile_tracker.model.SmsLog;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 public class MessageLogFragment extends Fragment {
@@ -36,6 +42,7 @@ public class MessageLogFragment extends Fragment {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("UpdateBroadcast","is called");
             fetch(context);
         }
     };
@@ -74,7 +81,7 @@ public class MessageLogFragment extends Fragment {
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         smsLogs = helper.getAllSMS();
-        linearLayoutManager = new LinearLayoutManager(context);
+       linearLayoutManager = new LinearLayoutManager(context);
         adapter = new SmsRecyclerAdapter(context);
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter.addAll(smsLogs);

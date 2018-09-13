@@ -11,7 +11,6 @@ import technology.nine.mobile_tracker.service.SmsDetectingService;
 public class SmsBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT < 24) {
             //after service stops ,start service again
             if (intent.getAction().equals("technology.nine.mobile_tracker.SMS_SERVICE")) {
                 startIntentService(context);
@@ -20,7 +19,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             if ((intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))) {
                 startIntentService(context);
             }
-        }
+
     }
 
     //start service

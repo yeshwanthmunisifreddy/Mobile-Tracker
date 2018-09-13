@@ -44,7 +44,9 @@ public class SmsRecyclerAdapter extends RecyclerView.Adapter<SmsRecyclerAdapter.
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView number, body, date;
+        TextView number;
+        TextView body;
+        TextView date;
 
         MyViewHolder(View itemView) {
             super(itemView);
