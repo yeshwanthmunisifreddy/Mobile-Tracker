@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.Objects;
@@ -34,10 +36,11 @@ import technology.nine.mobile_tracker.fragments.CallLogsFragments;
 import technology.nine.mobile_tracker.fragments.MessageLogFragment;
 import technology.nine.mobile_tracker.fragments.NotificationLogFragment;
 import technology.nine.mobile_tracker.service.SmsDetectingService;
+import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener {
     private static final int READ_CALL_LOG_PERMISSION_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private boolean sentToSettings = false;
@@ -45,7 +48,10 @@ public class MainActivity extends AppCompatActivity
     Intent mServiceIntent;
     boolean doubleBackToExitPressedOnce = false;
     Fragment fragment;
-
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawer;
+    boolean chatFragment;
+    private boolean mToolBarNavigationListenerIsRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +61,9 @@ public class MainActivity extends AppCompatActivity
         permissions();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(true);
+        drawer = findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -64,7 +71,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //start background service
-
         if (!isMyServiceRunning(SmsDetectingService.class)) {
             mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
             if (Build.VERSION.SDK_INT >= 26) {
@@ -74,27 +80,44 @@ public class MainActivity extends AppCompatActivity
             }
         }
         displaySelectedScreen(R.id.call_logs);
+
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (doubleBackToExitPressedOnce) {
-                finish();
+    public void enableViews(boolean enable) {
+        if (enable) {
+            //You may not want to open the drawer on swipe from the left in this case
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            // Remove hamburger
+            toggle.setDrawerIndicatorEnabled(false);
+            // Show back button
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            // when DrawerToggle is disabled i.e. setDrawerIndicatorEnabled(false), navigation icon
+            // clicks are disabled i.e. the UP button will not work.
+            // We need to add a listener, as in below, so DrawerToggle will forward
+            // click events to this listener.
+            if (!mToolBarNavigationListenerIsRegistered) {
+                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Doesn't have to be onBackPressed
+                        MainActivity.super.onBackPressed();
+                    }
+                });
+
+                mToolBarNavigationListenerIsRegistered = true;
             }
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
+        } else {
+            //You must regain the power of swipe for the drawer.
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
+            // Remove back button
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            // Show hamburger
+            toggle.setDrawerIndicatorEnabled(true);
+            // Remove the/any drawer toggle listener
+            toggle.setToolbarNavigationClickListener(null);
+            mToolBarNavigationListenerIsRegistered = false;
         }
     }
 
@@ -126,21 +149,21 @@ public class MainActivity extends AppCompatActivity
         switch (itemId) {
             case R.id.call_logs:
                 fragment = new CallLogsFragments();
-                Objects.requireNonNull(getSupportActionBar()).setTitle("Calls");
                 break;
             case R.id.message_logs:
                 fragment = new MessageLogFragment();
-                Objects.requireNonNull(getSupportActionBar()).setTitle("Messages");
                 break;
             case R.id.notification_logs:
                 fragment = new NotificationLogFragment();
-                Objects.requireNonNull(getSupportActionBar()).setTitle("Notifications");
                 break;
+
+
         }
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.content_frame, fragment);
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -310,4 +333,35 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onFragmentInteraction(String title, boolean enable) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+        enableViews(enable);
+        chatFragment = enable;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        if (chatFragment) {
+            super.onBackPressed();
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                finish();
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
+    }
 }

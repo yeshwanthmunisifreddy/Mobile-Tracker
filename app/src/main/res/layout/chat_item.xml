@@ -69,15 +69,6 @@
         tool:ignore="RtlSymmetry">
 
         <TextView
-            android:id="@+id/lblMsgYou"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textColor="#777777"
-            android:textSize="12sp"
-            android:textStyle="italic" />
-
-        <TextView
             android:id="@+id/txtMsgYou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

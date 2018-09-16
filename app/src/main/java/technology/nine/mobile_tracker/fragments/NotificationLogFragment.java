@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.NotificationRecyclerAdapter;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.NotificationLogs;
 import technology.nine.mobile_tracker.model.SmsLogs;
+import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 
 public class NotificationLogFragment extends Fragment {
     View view;
@@ -28,14 +30,37 @@ public class NotificationLogFragment extends Fragment {
     NotificationRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     List<NotificationLogs> notificationLogs = new ArrayList<>();
+    private OnFragmentInteractionListener listener;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_call_log,container,false);
+        view = inflater.inflate(R.layout.activity_call_log, container, false);
+        if (listener != null) {
+            listener.onFragmentInteraction("Notifications",false);
+        }
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
         return view;
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         notificationLogs = helper.getAllNotifications();

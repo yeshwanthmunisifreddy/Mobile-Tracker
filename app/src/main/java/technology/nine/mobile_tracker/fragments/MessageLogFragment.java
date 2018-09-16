@@ -1,6 +1,7 @@
 package technology.nine.mobile_tracker.fragments;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,11 +23,13 @@ import java.util.List;
 import java.util.Objects;
 
 import technology.nine.mobile_tracker.ChatActivity;
+import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
+import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 import technology.nine.mobile_tracker.utils.SimpleDividerItemDecoration;
 
 public class MessageLogFragment extends Fragment {
@@ -37,7 +40,8 @@ public class MessageLogFragment extends Fragment {
     SmsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     List<SmsLogs> smsLogs = new ArrayList<>();
-    SmsRecyclerAdapter.ClickListener  listener;
+    SmsRecyclerAdapter.ClickListener listener;
+    private OnFragmentInteractionListener mListener;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -50,15 +54,22 @@ public class MessageLogFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_call_log, container, false);
+        if (mListener != null) {
+            mListener.onFragmentInteraction("Messages",false);
+        }
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
-          listener = new SmsRecyclerAdapter.ClickListener() {
+        listener = new SmsRecyclerAdapter.ClickListener() {
             @Override
             public void onItemClicked(String number) {
-             Intent intent = new Intent(getContext(),ChatActivity.class);
-             intent.putExtra("Number",number);
-             getContext().startActivity(intent);
-
+                ChatActivity chatActivity = new ChatActivity();
+                Log.e("Item", "is clicked");
+                Bundle args = new Bundle();
+                args.putString("Number", number);
+                chatActivity.setArguments(args);
+                assert getFragmentManager() != null;
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, chatActivity)
+                        .addToBackStack("chatActivity").commit();
             }
         };
         return view;
@@ -70,6 +81,23 @@ public class MessageLogFragment extends Fragment {
         //registration of Local Broadcast
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
                 .registerReceiver(receiver, new IntentFilter(MessageContentObserver.UPDATE_SMS_LOGS_UI));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -91,7 +119,7 @@ public class MessageLogFragment extends Fragment {
         helper = new LogsDBHelper(context);
         smsLogs = helper.getAllSMS();
         linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new SmsRecyclerAdapter(context,listener);
+        adapter = new SmsRecyclerAdapter(context, listener);
         recyclerView.setLayoutManager(linearLayoutManager);
         // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         adapter.addAll(smsLogs);
@@ -100,6 +128,7 @@ public class MessageLogFragment extends Fragment {
         updateUi();
 
     }
+
     private void updateUi() {
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
                 .sendBroadcast(new Intent(UPDATE_ALL_SMS_PER_USER));

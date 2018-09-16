@@ -36,22 +36,21 @@ public class ChatConversationRecyclerAdapter extends RecyclerView.Adapter<ChatCo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
         String type = smsLogs.get(i).getMessageType();
-        try{
+        try {
             if (type.equals("Received")) {
                 holder.txtMsgFrom.setText(smsLogs.get(i).getMessageBody());
                 holder.dateMsgFrom.setText(smsLogs.get(i).getDate());
                 holder.timeMsgFrom.setText(smsLogs.get(i).getTime());
                 holder.msgFrom.setVisibility(View.VISIBLE);
                 holder.msgYou.setVisibility(View.GONE);
-            }else {
-                holder.lblMsgYou.setText(R.string.you);
+            } else {
                 holder.txtMsgYou.setText(smsLogs.get(i).getMessageBody());
                 holder.dateMsgYou.setText(smsLogs.get(i).getDate());
                 holder.timeMsgYou.setText(smsLogs.get(i).getTime());
                 holder.msgFrom.setVisibility(View.GONE);
                 holder.msgYou.setVisibility(View.VISIBLE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -64,21 +63,22 @@ public class ChatConversationRecyclerAdapter extends RecyclerView.Adapter<ChatCo
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         LinearLayout msgFrom, msgYou;
-        TextView txtMsgYou, lblMsgYou, timeMsgYou, txtMsgFrom, timeMsgFrom, dateMsgFrom, dateMsgYou;
+        TextView txtMsgYou, timeMsgYou, txtMsgFrom, timeMsgFrom, dateMsgFrom, dateMsgYou;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             txtMsgYou = itemView.findViewById(R.id.txtMsgYou);
-            lblMsgYou = itemView.findViewById(R.id.lblMsgYou);
             timeMsgYou = itemView.findViewById(R.id.timeMsgYou);
+            dateMsgYou = itemView.findViewById(R.id.dateMsgYou);
+            msgYou = itemView.findViewById(R.id.msgYou);
             timeMsgFrom = itemView.findViewById(R.id.timeMsgFrom);
             txtMsgFrom = itemView.findViewById(R.id.txtMsgFrom);
             msgFrom = itemView.findViewById(R.id.msgFrom);
-            msgYou = itemView.findViewById(R.id.msgYou);
             dateMsgFrom = itemView.findViewById(R.id.dateMsgFrom);
-            dateMsgYou = itemView.findViewById(R.id.dateMsgYou);
+
         }
     }
+
     public void add(SmsLogs r) {
         smsLogs.add(r);
         notifyItemInserted(smsLogs.size() - 1);

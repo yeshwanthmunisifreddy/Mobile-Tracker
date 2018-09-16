@@ -26,6 +26,7 @@ import technology.nine.mobile_tracker.adapters.CallLogsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.CallLogs;
 import technology.nine.mobile_tracker.service.CallDetectService;
+import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 
 public class CallLogsFragments extends Fragment {
     View view;
@@ -34,7 +35,7 @@ public class CallLogsFragments extends Fragment {
     CallLogsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     List<CallLogs> callLogs = new ArrayList<>();
-
+    private OnFragmentInteractionListener listener;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -48,6 +49,9 @@ public class CallLogsFragments extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_call_log, container, false);
+        if (listener != null) {
+            listener.onFragmentInteraction("Calls",false);
+        }
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
         return view;
@@ -62,10 +66,29 @@ public class CallLogsFragments extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
         fetch(getContext());
     }
+
     //load Call Logs  data from database into recycler view
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
