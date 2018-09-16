@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import technology.nine.mobile_tracker.ChatActivity;
 import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
+import technology.nine.mobile_tracker.utils.SimpleDividerItemDecoration;
 
 public class MessageLogFragment extends Fragment {
     public static final String UPDATE_ALL_SMS_PER_USER = "updateAllSmsEveryUser";
@@ -35,6 +37,7 @@ public class MessageLogFragment extends Fragment {
     SmsRecyclerAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     List<SmsLogs> smsLogs = new ArrayList<>();
+    SmsRecyclerAdapter.ClickListener  listener;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -45,10 +48,19 @@ public class MessageLogFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_call_log, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
+          listener = new SmsRecyclerAdapter.ClickListener() {
+            @Override
+            public void onItemClicked(String number) {
+             Intent intent = new Intent(getContext(),ChatActivity.class);
+             intent.putExtra("Number",number);
+             getContext().startActivity(intent);
+
+            }
+        };
         return view;
     }
 
@@ -73,13 +85,15 @@ public class MessageLogFragment extends Fragment {
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(receiver);
     }
 
+
     //load Sms  data from database into recycler view
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         smsLogs = helper.getAllSMS();
-       linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new SmsRecyclerAdapter(context);
+        linearLayoutManager = new LinearLayoutManager(context);
+        adapter = new SmsRecyclerAdapter(context,listener);
         recyclerView.setLayoutManager(linearLayoutManager);
+        // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         adapter.addAll(smsLogs);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

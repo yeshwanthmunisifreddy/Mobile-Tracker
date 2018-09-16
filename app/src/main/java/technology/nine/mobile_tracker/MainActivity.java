@@ -2,10 +2,6 @@ package technology.nine.mobile_tracker;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.app.Fragment;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,10 +12,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,7 +34,6 @@ import technology.nine.mobile_tracker.fragments.CallLogsFragments;
 import technology.nine.mobile_tracker.fragments.MessageLogFragment;
 import technology.nine.mobile_tracker.fragments.NotificationLogFragment;
 import technology.nine.mobile_tracker.service.SmsDetectingService;
-import technology.nine.mobile_tracker.service.SmsJobService;
 
 
 public class MainActivity extends AppCompatActivity
@@ -47,8 +44,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences permissionStatus;
     Intent mServiceIntent;
     boolean doubleBackToExitPressedOnce = false;
-    public static final int JOB_ID = 102;
-    static JobInfo JOB_INFO = null;
+    Fragment fragment;
 
 
     @Override
@@ -69,22 +65,15 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         //start background service
 
-            if (!isMyServiceRunning(SmsDetectingService.class)) {
-                mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
-                if (Build.VERSION.SDK_INT >= 26) {
-                    startForegroundService(mServiceIntent);
-                } else {
-                    startService(mServiceIntent);
-                }
+        if (!isMyServiceRunning(SmsDetectingService.class)) {
+            mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
+            if (Build.VERSION.SDK_INT >= 26) {
+                startForegroundService(mServiceIntent);
+            } else {
+                startService(mServiceIntent);
             }
-
-        //loading default fragment
-        if (savedInstanceState == null) {
-            MenuItem item = navigationView.getMenu().getItem(0);
-            onNavigationItemSelected(item);
-            item.setChecked(true);
         }
-
+        displaySelectedScreen(R.id.call_logs);
     }
 
     @Override
@@ -126,41 +115,43 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if (id == R.id.call_logs) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Calls");
-            CallLogsFragments callLogsFragments = new CallLogsFragments();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, callLogsFragments)
-                    .addToBackStack(null)
-                    .commit();
-        } else if (id == R.id.message_logs) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Messages");
-            MessageLogFragment messageLogFragment = new MessageLogFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, messageLogFragment)
-                    .addToBackStack(null)
-                    .commit();
+        displaySelectedScreen(item.getItemId());
+        return true;
+    }
 
-        } else if (id == R.id.notification_logs) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Notifications");
-            NotificationLogFragment notificationLogFragment = new NotificationLogFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, notificationLogFragment)
-                    .addToBackStack(null)
-                    .commit();
+    private void displaySelectedScreen(int itemId) {
+        //creating fragment object
+        fragment = null;
+        //initializing the fragment object which is selected
+        switch (itemId) {
+            case R.id.call_logs:
+                fragment = new CallLogsFragments();
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Calls");
+                break;
+            case R.id.message_logs:
+                fragment = new MessageLogFragment();
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Messages");
+                break;
+            case R.id.notification_logs:
+                fragment = new NotificationLogFragment();
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Notifications");
+                break;
+        }
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.content_frame, fragment);
+            fragmentTransaction.commit();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
     protected void onDestroy() {
         try {
             if (isMyServiceRunning(SmsDetectingService.class)) {
-                stopService(new Intent(MainActivity.this, SmsDetectingService.class
-                ));
+                stopService(new Intent(MainActivity.this, SmsDetectingService.class));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,22 +169,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return false;
-    }
-
-    // To notice the content uri of sms is  changed
-    private void jobScheduler() {
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, new ComponentName(this, SmsJobService.class))
-                    .addTriggerContentUri(new JobInfo.TriggerContentUri(
-                            Telephony.Sms.CONTENT_URI,
-                            JobInfo.TriggerContentUri.FLAG_NOTIFY_FOR_DESCENDANTS));
-            builder.setMinimumLatency(0);
-            JOB_INFO = builder.build();
-            assert jobScheduler != null;
-            jobScheduler.schedule(JOB_INFO);
-
-        }
     }
 
     //permissions for accessing the Call and SMS data

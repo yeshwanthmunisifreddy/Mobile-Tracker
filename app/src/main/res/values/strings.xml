@@ -20,4 +20,5 @@
     <string name="share">Share</string>
     <string name="info">Info</string>
     <string name="you">you</string>
+    <string name="full_message_activity">technology.nine.mobile_tracker.ChatActivity</string>
 </resources>

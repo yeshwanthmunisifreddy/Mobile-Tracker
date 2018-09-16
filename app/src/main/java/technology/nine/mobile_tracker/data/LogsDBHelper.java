@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import technology.nine.mobile_tracker.model.CallLogs;
+import technology.nine.mobile_tracker.model.NotificationLogs;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.*;
@@ -122,8 +123,8 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     //Reading SMS from Database
     public List<SmsLogs> getAllSMS() {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
-        List<SmsLogs> smsLogss = new ArrayList<>();
-        LinkedHashMap<String, ArrayList<SmsLogs>> smsLogs = new LinkedHashMap<>();
+        List<SmsLogs> smsLogs = new ArrayList<>();
+        LinkedHashMap<String, ArrayList<SmsLogs>> linkedHashMap = new LinkedHashMap<>();
         Cursor cursor = readableDatabase.query(SMS_TABLE_NAME,
                 null,
                 null,
@@ -140,27 +141,25 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow(SMS_TYPE));
 
-                if (smsLogs.containsKey(number)) {
-
-                } else {
+                if (!linkedHashMap.containsKey(number)) {
                     ArrayList<SmsLogs> messages = new ArrayList<>();
                     messages.add(new SmsLogs(number, body, time, date, type));
-                    smsLogs.put(number, messages);
+                    linkedHashMap.put(number, messages);
                 }
 
             }
         } finally {
-            Set s = smsLogs.entrySet();
+            Set s = linkedHashMap.entrySet();
             Iterator iterator = s.iterator();
             while (iterator.hasNext()) {
                 Map.Entry m1 = (Map.Entry) iterator.next();
                 ArrayList<SmsLogs> smsLogs1 = (ArrayList<SmsLogs>) m1.getValue();
-                smsLogss.addAll(smsLogs1);
+                smsLogs.addAll(smsLogs1);
             }
             cursor.close();
 
         }
-        return smsLogss;
+        return smsLogs;
     }
 
 
@@ -178,6 +177,7 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
+        Log.e("ReadSmsLogs", cursor.getCount() + "");
         if (cursor.getCount() != 0) {
             returnValue = true;
             cursor.close();
@@ -218,11 +218,51 @@ public class LogsDBHelper extends SQLiteOpenHelper {
         }
         return retrunValue;
     }
-    public  List<SmsLogs>  getAllEachNumber(String number){
+
+    public List<NotificationLogs> getAllNotifications() {
+        SQLiteDatabase readableDatabase = this.getReadableDatabase();
+        List<NotificationLogs> notificationLogs = new ArrayList<>();
+        LinkedHashMap<String, ArrayList<NotificationLogs>> linkedHashMap = new LinkedHashMap<>();
+        Cursor cursor = readableDatabase.query(NOTIFICATION_TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                _ID + " DESC "
+        );
+        try {
+            while (cursor.moveToNext()){
+                String packageName = cursor.getString(cursor.getColumnIndexOrThrow(PACKAGE_NAME));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(TITLE));
+                String text = cursor.getString(cursor.getColumnIndexOrThrow(TEXT));
+                String date  = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
+                byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(IMAGE));
+                if (!linkedHashMap.containsKey(packageName)){
+                    ArrayList<NotificationLogs> notifications = new ArrayList<>();
+                    notifications.add(new NotificationLogs(packageName, title, text, date, image));
+                    linkedHashMap.put(packageName, notifications);
+                }
+
+            }
+        }finally {
+            Set s = linkedHashMap.entrySet();
+            Iterator iterator = s.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry m1 = (Map.Entry) iterator.next();
+                ArrayList<NotificationLogs> notificationLogsArrayList = (ArrayList<NotificationLogs>) m1.getValue();
+                notificationLogs.addAll(notificationLogsArrayList);
+            }
+            cursor.close();
+        }
+        return notificationLogs;
+    }
+
+    public List<SmsLogs> getAllEachNumber(String number) {
         SQLiteDatabase readableDatabase = this.getReadableDatabase();
         List<SmsLogs> smsLogs = new ArrayList<>();
         String selection = NUMBER + " = ?";
-        String[] selectionArgs =  new String[]{number};
+        String[] selectionArgs = new String[]{number};
         Cursor cursor = readableDatabase.query(SMS_TABLE_NAME,
                 null,
                 selection,
@@ -238,9 +278,9 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 String time = cursor.getString(cursor.getColumnIndexOrThrow(TIME));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow(SMS_TYPE));
-                smsLogs.add(new SmsLogs(phoneNumber,body,time,date,type));
+                smsLogs.add(new SmsLogs(phoneNumber, body, time, date, type));
             }
-        }finally {
+        } finally {
             cursor.close();
         }
         return smsLogs;

@@ -67,7 +67,7 @@ public class MessageContentObserver extends ContentObserver {
 
     private void insertSmsDatabase() {
         try {
-            Cursor cursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, " date DESC LIMIT  1 ");
+            Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms"), null, null, null, " date DESC LIMIT  1 ");
             if (cursor != null) {
                 try {
                     while (cursor.moveToNext()) {
