@@ -1,6 +1,5 @@
 package technology.nine.mobile_tracker.fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.CallLogsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
@@ -48,7 +46,7 @@ public class CallLogsFragments extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_call_log, container, false);
+        view = inflater.inflate(R.layout.recycler_layout, container, false);
         if (listener != null) {
             listener.onFragmentInteraction("Calls",false);
         }

@@ -1,7 +1,5 @@
 package technology.nine.mobile_tracker.fragments;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,15 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import technology.nine.mobile_tracker.ChatActivity;
-import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
 import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
-import technology.nine.mobile_tracker.utils.SimpleDividerItemDecoration;
 
 public class MessageLogFragment extends Fragment {
     public static final String UPDATE_ALL_SMS_PER_USER = "updateAllSmsEveryUser";
@@ -53,7 +48,7 @@ public class MessageLogFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_call_log, container, false);
+        view = inflater.inflate(R.layout.recycler_layout, container, false);
         if (mListener != null) {
             mListener.onFragmentInteraction("Messages",false);
         }
@@ -62,7 +57,7 @@ public class MessageLogFragment extends Fragment {
         listener = new SmsRecyclerAdapter.ClickListener() {
             @Override
             public void onItemClicked(String number) {
-                ChatActivity chatActivity = new ChatActivity();
+                ChatFragment chatActivity = new ChatFragment();
                 Log.e("Item", "is clicked");
                 Bundle args = new Bundle();
                 args.putString("Number", number);

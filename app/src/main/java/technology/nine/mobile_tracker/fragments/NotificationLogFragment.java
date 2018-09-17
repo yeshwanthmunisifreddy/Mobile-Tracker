@@ -14,13 +14,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import technology.nine.mobile_tracker.MainActivity;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.NotificationRecyclerAdapter;
-import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.NotificationLogs;
-import technology.nine.mobile_tracker.model.SmsLogs;
 import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 
 public class NotificationLogFragment extends Fragment {
@@ -35,7 +32,7 @@ public class NotificationLogFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_call_log, container, false);
+        view = inflater.inflate(R.layout.recycler_layout, container, false);
         if (listener != null) {
             listener.onFragmentInteraction("Notifications",false);
         }

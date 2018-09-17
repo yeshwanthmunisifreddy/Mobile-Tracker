@@ -173,22 +173,17 @@ public class NotificationService extends NotificationListenerService {
         Log.e("text",text+"");
         Log.e("text_big",text_big+"");
         Log.e("summary",summary+"");
-        Log.e("subtext",subtext+"");
-        Log.e("infotext",infotext+"");
+
         Log.e("textlines",textlines+"");
         Log.e("tag",tag+"");
         Log.e("clear",clear+"");
         Log.e("ongoing",ongoing+"");
         Log.e("time1",time1+"");
-        Log.e("time2",time2+"");
         Log.e("getid",getid+"");
         Log.e("time3",time3+"");
         Log.e("Image",bmp+"");
         Log.e("BigIcon",bigIcon+"");
-        Log.e("Icon",icon+"");
         Log.e("picture",picture+"");
-        Log.e("largeIcon",largeIcon+"");
-        Log.e("backgroundUrl",backgroundUrl+"");
     }
 }
 

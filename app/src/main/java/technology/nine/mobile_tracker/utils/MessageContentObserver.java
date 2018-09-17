@@ -74,7 +74,7 @@ public class MessageContentObserver extends ContentObserver {
                         String body = cursor.getString(cursor.getColumnIndex(COLUMN_BODY)); //content of sms
                         String add = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)); //phone num
                         long date = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE)); //date
-                        Log.e("add",add);
+                        Log.e("add",date+"");
                         String type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
                         String  messageType = null;
                         if (type .equals("2")){

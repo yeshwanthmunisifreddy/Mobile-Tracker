@@ -1,6 +1,7 @@
 package technology.nine.mobile_tracker;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,9 +26,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawer;
     boolean chatFragment;
     private boolean mToolBarNavigationListenerIsRegistered = false;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,43 +88,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void enableViews(boolean enable) {
-        if (enable) {
-            //You may not want to open the drawer on swipe from the left in this case
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            // Remove hamburger
-            toggle.setDrawerIndicatorEnabled(false);
-            // Show back button
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            // when DrawerToggle is disabled i.e. setDrawerIndicatorEnabled(false), navigation icon
-            // clicks are disabled i.e. the UP button will not work.
-            // We need to add a listener, as in below, so DrawerToggle will forward
-            // click events to this listener.
-            if (!mToolBarNavigationListenerIsRegistered) {
-                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Doesn't have to be onBackPressed
-                        MainActivity.super.onBackPressed();
-                    }
-                });
-
-                mToolBarNavigationListenerIsRegistered = true;
-            }
-
-        } else {
-            //You must regain the power of swipe for the drawer.
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-            // Remove back button
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            // Show hamburger
-            toggle.setDrawerIndicatorEnabled(true);
-            // Remove the/any drawer toggle listener
-            toggle.setToolbarNavigationClickListener(null);
-            mToolBarNavigationListenerIsRegistered = false;
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -194,6 +162,38 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        if (chatFragment) {
+            super.onBackPressed();
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                finish();
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(String title, boolean enable) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+        enableViews(enable);
+        chatFragment = enable;
+    }
+
     //permissions for accessing the Call and SMS data
     public void permissions() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -205,9 +205,9 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.READ_CALL_LOG)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        | ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.READ_SMS)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        | ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.RECEIVE_SMS)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need Permissions");
@@ -230,8 +230,8 @@ public class MainActivity extends AppCompatActivity
                     });
                     builder.show();
                 } else if (permissionStatus.getBoolean(Manifest.permission.READ_CALL_LOG, false)
-                        || permissionStatus.getBoolean(Manifest.permission.READ_SMS, false)
-                        || permissionStatus.getBoolean(Manifest.permission.RECEIVE_SMS, false)) {
+                        | permissionStatus.getBoolean(Manifest.permission.READ_SMS, false)
+                        | permissionStatus.getBoolean(Manifest.permission.RECEIVE_SMS, false)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need Permissions");
                     builder.setMessage("This app  needs Read Call Log  and Read SMS Permission.");
@@ -281,9 +281,9 @@ public class MainActivity extends AppCompatActivity
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.READ_CALL_LOG)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        | ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.READ_SMS)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        | ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                         Manifest.permission.RECEIVE_SMS)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need  Permissions");
@@ -333,35 +333,43 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onFragmentInteraction(String title, boolean enable) {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-        enableViews(enable);
-        chatFragment = enable;
-    }
+    public void enableViews(boolean enable) {
+        if (enable) {
+            //You may not want to open the drawer on swipe from the left in this case
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            // Remove hamburger
+            toggle.setDrawerIndicatorEnabled(false);
+            // Show back button
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_white);
+            // when DrawerToggle is disabled i.e. setDrawerIndicatorEnabled(false), navigation icon
+            // clicks are disabled i.e. the UP button will not work.
+            // We need to add a listener, as in below, so DrawerToggle will forward
+            // click events to this listener.
+            if (!mToolBarNavigationListenerIsRegistered) {
+                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Doesn't have to be onBackPressed
+                        MainActivity.super.onBackPressed();
+                    }
+                });
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-        if (chatFragment) {
-            super.onBackPressed();
-        } else {
-            if (doubleBackToExitPressedOnce) {
-                finish();
+                mToolBarNavigationListenerIsRegistered = true;
             }
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable() {
+        } else {
+            //You must regain the power of swipe for the drawer.
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
+            // Remove back button
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            // Show hamburger
+            toggle.setDrawerIndicatorEnabled(true);
+            // Remove the/any drawer toggle listener
+            toggle.setToolbarNavigationClickListener(null);
+            mToolBarNavigationListenerIsRegistered = false;
         }
     }
+
 }

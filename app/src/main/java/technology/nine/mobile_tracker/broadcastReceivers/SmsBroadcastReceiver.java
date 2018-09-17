@@ -5,12 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.provider.Telephony;
+import android.telephony.SmsMessage;
+import android.util.Log;
+import android.widget.Toast;
 
 import technology.nine.mobile_tracker.service.SmsDetectingService;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("onReceive", "is called ");
+        Log.e("Action", intent.getAction());
             //after service stops ,start service again
             if (intent.getAction().equals("technology.nine.mobile_tracker.SMS_SERVICE")) {
                 startIntentService(context);
@@ -19,6 +25,20 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             if ((intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))) {
                 startIntentService(context);
             }
+        if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
+            for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
+                String messageBody = smsMessage.getMessageBody();
+                String add = smsMessage.getOriginatingAddress();
+                long date = smsMessage.getTimestampMillis();
+                String name = smsMessage.getDisplayMessageBody();
+                Toast.makeText(context,messageBody+" "+add,Toast.LENGTH_SHORT).show();
+                Log.e("messageBody",messageBody);
+                Log.e("address",add);
+                Log.e("time",date+"");
+                Log.e("name",name+"");
+
+            }
+        }
 
     }
 

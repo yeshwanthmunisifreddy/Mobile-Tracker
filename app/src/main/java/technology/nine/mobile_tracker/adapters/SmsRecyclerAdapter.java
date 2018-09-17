@@ -1,7 +1,6 @@
 package technology.nine.mobile_tracker.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import technology.nine.mobile_tracker.ChatActivity;
 import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.model.SmsLogs;
 

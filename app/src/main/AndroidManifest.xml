@@ -27,14 +27,9 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChatActivity">
-
-        </activity>
-
         <receiver android:name=".broadcastReceivers.CallLogBroadcastReceiver">
             <intent-filter android:priority="23">
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -50,9 +45,9 @@
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="20">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="technology.nine.mobile_tracker.SMS_SERVICE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -68,6 +63,7 @@
             android:exported="true"
             android:stopWithTask="false">
             <intent-filter>
+
                 <action android:name="custom.SMS_SERVICE" />
             </intent-filter>
         </service>
