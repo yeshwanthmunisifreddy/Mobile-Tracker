@@ -21,4 +21,8 @@
     <string name="info">Info</string>
     <string name="you">you</string>
     <string name="full_message_activity">technology.nine.mobile_tracker.ChatActivity</string>
+    <string name="todo">TODO</string>
+    <string name="small_icon">smallIcon</string>
+    <string name="large_icon">largeIcon</string>
+    <string name="extra_picture">extraPicture</string>
 </resources>

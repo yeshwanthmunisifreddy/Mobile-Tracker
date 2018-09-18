@@ -16,6 +16,7 @@ import java.util.Set;
 
 import technology.nine.mobile_tracker.model.CallLogs;
 import technology.nine.mobile_tracker.model.NotificationLogs;
+import technology.nine.mobile_tracker.model.Notifications;
 import technology.nine.mobile_tracker.model.SmsLogs;
 
 import static technology.nine.mobile_tracker.data.LogsContract.LogsEntry.*;
@@ -49,10 +50,16 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     private String SQL_CREATE_NOTIFICATION_TABLE = " CREATE TABLE " + NOTIFICATION_TABLE_NAME + "(" +
             _ID + " INTEGER PRIMARY KEY, " +
             PACKAGE_NAME + " TEXT, " +
+            APP_NAME + " TEXT, " +
             TITLE + " TEXT, " +
+            BIG_TITLE + " TEXT, " +
             TEXT + " TEXT, " +
+            BIG_TEXT + " TEXT, " +
+            SUMMARY + " TEXT, " +
             DATE + " TEXT, " +
-            IMAGE + " BLOB);";
+            SMALL_ICON + " BLOB, " +
+            BIG_ICON + " BLOB, " +
+            PICTURE + " BLOB);";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -63,6 +70,7 @@ public class LogsDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
     }
 
     // Inserting Call logs into Database
@@ -188,14 +196,21 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     }
 
     //Inserting Notifications into Database
-    public boolean insertNotifications(String packageName, String title, String text, String date, byte[] image) {
+    public boolean insertNotifications(String packageName, String appName, String title, String bigTitle, String text,
+                                       String bigText, String summary, String date, byte[] smallIcon, byte[] bigIcon, byte[] extraPicture) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(PACKAGE_NAME, packageName);
+        values.put(APP_NAME, appName);
         values.put(TITLE, title);
+        values.put(BIG_TITLE, bigTitle);
         values.put(TEXT, text);
+        values.put(BIG_TEXT, bigText);
+        values.put(SUMMARY, summary);
         values.put(DATE, date);
-        values.put(IMAGE, image);
+        values.put(SMALL_ICON, smallIcon);
+        values.put(BIG_ICON, bigIcon);
+        values.put(PICTURE, extraPicture);
         return (db.insert(NOTIFICATION_TABLE_NAME, null, values) != -1);
     }
 
@@ -232,20 +247,21 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 _ID + " DESC "
         );
         try {
-            while (cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 String packageName = cursor.getString(cursor.getColumnIndexOrThrow(PACKAGE_NAME));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(TITLE));
                 String text = cursor.getString(cursor.getColumnIndexOrThrow(TEXT));
-                String date  = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
-                byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(IMAGE));
-                if (!linkedHashMap.containsKey(packageName)){
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
+                String appName = cursor.getString(cursor.getColumnIndexOrThrow(APP_NAME));
+                byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(SMALL_ICON));
+                if (!linkedHashMap.containsKey(packageName)) {
                     ArrayList<NotificationLogs> notifications = new ArrayList<>();
-                    notifications.add(new NotificationLogs(packageName, title, text, date, image));
+                    notifications.add(new NotificationLogs(packageName, title, text, date, appName,image));
                     linkedHashMap.put(packageName, notifications);
                 }
 
             }
-        }finally {
+        } finally {
             Set s = linkedHashMap.entrySet();
             Iterator iterator = s.iterator();
             while (iterator.hasNext()) {
@@ -256,6 +272,41 @@ public class LogsDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return notificationLogs;
+    }
+
+    public List<Notifications> getEachPackageNotifications(String packageName) {
+        Log.e("PackageNotifications",packageName +"");
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Notifications> notifications = new ArrayList<>();
+        String selection = APP_NAME + " = ?";
+        String[] selectionArgs = new String[]{packageName};
+        Cursor cursor = db.query(NOTIFICATION_TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        try {
+            while (cursor.moveToNext()) {
+                String pack = cursor.getString(cursor.getColumnIndexOrThrow(PACKAGE_NAME));
+                String appName = cursor.getString(cursor.getColumnIndexOrThrow(APP_NAME));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(TITLE));
+                String bigTitle = cursor.getString(cursor.getColumnIndexOrThrow(BIG_TITLE));
+                String text = cursor.getString(cursor.getColumnIndexOrThrow(TEXT));
+                String bigText = cursor.getString(cursor.getColumnIndexOrThrow(BIG_TEXT));
+                String summary = cursor.getString(cursor.getColumnIndexOrThrow(SUMMARY));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
+                byte[] smallIcon = cursor.getBlob(cursor.getColumnIndexOrThrow(SMALL_ICON));
+                byte[] bigIcon = cursor.getBlob(cursor.getColumnIndexOrThrow(BIG_ICON));
+                byte[] extraPicture = cursor.getBlob(cursor.getColumnIndexOrThrow(PICTURE));
+                notifications.add(new Notifications(pack, appName, title, bigTitle, text, bigText, summary, date, smallIcon, bigIcon, extraPicture));
+            }
+        }finally {
+            cursor.close();
+        }
+        return notifications;
     }
 
     public List<SmsLogs> getAllEachNumber(String number) {

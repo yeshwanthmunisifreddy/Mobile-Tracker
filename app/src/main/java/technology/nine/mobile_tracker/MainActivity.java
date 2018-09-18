@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawer;
     boolean chatFragment;
     private boolean mToolBarNavigationListenerIsRegistered = false;
-    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

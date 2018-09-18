@@ -16,19 +16,11 @@ class LogsContract {
                 CALL_LOG_TABLE_NAME = "CallLog";
 
         //Table column names
-        static final String NAME = "name",
-                NUMBER = "number",
-                CALL_TYPE = "callType",
-                DATE = "date",
-                TIME = "time",
-                DURATION = "duration",
-                BODY = "body",
-                SMS_TYPE = "SmsType",
-                TITLE = "title",
-                TEXT = "text",
-                PACKAGE_NAME = "packageName",
-                NOTIFICATION_DATE = "notificationDate",
-                IMAGE = "image_data";
+        static final String NAME = "name", NUMBER = "number", CALL_TYPE = "callType", DATE = "date", TIME = "time",
+                DURATION = "duration", BODY = "body", SMS_TYPE = "SmsType",
+                TEXT = "text", PACKAGE_NAME = "packageName",   TITLE = "title", SMALL_ICON= "smallIcon",
+                APP_NAME = "appName", BIG_TITLE = "bigTitle",BIG_TEXT ="bigText",
+                SUMMARY="summary",BIG_ICON = "bigIcon",PICTURE = "picture";
 
     }
 }

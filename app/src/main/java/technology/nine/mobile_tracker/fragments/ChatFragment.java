@@ -40,8 +40,6 @@ public class ChatFragment extends Fragment {
         setHasOptionsMenu(true);
         if (getArguments() != null) {
             number = getArguments().getString("Number");
-
-
         }
     }
 
@@ -53,9 +51,6 @@ public class ChatFragment extends Fragment {
             listener.onFragmentInteraction(number, true);
         }
         recyclerView = view.findViewById(R.id.recycler_view);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        assert mainActivity != null;
-        Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle(number);
         fetch(getContext());
         return view;
     }

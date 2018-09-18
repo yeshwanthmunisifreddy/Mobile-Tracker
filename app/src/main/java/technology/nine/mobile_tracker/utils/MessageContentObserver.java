@@ -18,17 +18,14 @@ import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 public class MessageContentObserver extends ContentObserver {
     private Context context;
-    private LogsDBHelper helper ;
+    private LogsDBHelper helper;
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_DATE = "date";
-    public static final String COLUMN_DATE_SENT = "date_sent";
-    public static final String COLUMN_PROTOCOL = "protocol";
-    public static final String COLUMN_SUBJECT = "subject";
     public static final String COLUMN_BODY = "body";
     public static final String COLUMN_TYPE = "type";
     public static final String UPDATE_SMS_LOGS_UI = "UpdateSmsLogsUi";
 
-    public MessageContentObserver(Context context,LogsDBHelper helper) {
+    public MessageContentObserver(Context context, LogsDBHelper helper) {
         super(new Handler());
         this.context = context;
         this.helper = helper;
@@ -37,7 +34,7 @@ public class MessageContentObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
-        Log.e("OnChange","is called");
+        Log.e("OnChange", "is called");
         try {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -47,7 +44,7 @@ public class MessageContentObserver extends ContentObserver {
             }, 3000);
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             helper.close();
         }
 
@@ -58,8 +55,8 @@ public class MessageContentObserver extends ContentObserver {
         super.onChange(selfChange, uri);
 
     }
+
     private void updateUi() {
-        Log.e("UpDateService","is called");
         LocalBroadcastManager.getInstance(context)
                 .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
 
@@ -73,27 +70,30 @@ public class MessageContentObserver extends ContentObserver {
                     while (cursor.moveToNext()) {
                         String body = cursor.getString(cursor.getColumnIndex(COLUMN_BODY)); //content of sms
                         String add = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)); //phone num
+                        Log.e("Body", body + "");
                         long date = cursor.getLong(cursor.getColumnIndex(COLUMN_DATE)); //date
-                        Log.e("add",date+"");
                         String type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
-                        String  messageType = null;
-                        if (type .equals("2")){
+                        String messageType = null;
+                        if (type.equals("2")) {
                             messageType = "Sent";
-                        }if (type.equals("1"))
-                        {
+                        }
+                        if (type.equals("1")) {
                             messageType = "Received";
                         }
                         Date d1 = new Date(date);
-                            DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
 
                         DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
                         String startDate = dateFormat.format(d1);
                         String startTime = timeFormat.format(d1);
-                        if (!helper.readSMSLogs(add,body, startDate,startTime)){
-                          if ( helper.insertSMS(add,body,startTime,startDate,messageType)){
-                              Log.e("UpdateInsert","is called");
-                              updateUi();
-                          }
+                        if (messageType.equals("sent")) {
+                            if (!helper.readSMSLogs(add, body, startDate, startTime)) {
+
+                                if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
+                                    updateUi();
+                                }
+
+                            }
 
                         }
 

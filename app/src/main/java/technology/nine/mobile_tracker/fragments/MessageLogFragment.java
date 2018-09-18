@@ -57,13 +57,13 @@ public class MessageLogFragment extends Fragment {
         listener = new SmsRecyclerAdapter.ClickListener() {
             @Override
             public void onItemClicked(String number) {
-                ChatFragment chatActivity = new ChatFragment();
+                ChatFragment chatFragment = new ChatFragment();
                 Log.e("Item", "is clicked");
                 Bundle args = new Bundle();
                 args.putString("Number", number);
-                chatActivity.setArguments(args);
+                chatFragment.setArguments(args);
                 assert getFragmentManager() != null;
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, chatActivity)
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, chatFragment)
                         .addToBackStack("chatActivity").commit();
             }
         };

@@ -21,7 +21,7 @@ public class SmsRecyclerAdapter extends RecyclerView.Adapter<SmsRecyclerAdapter.
     private ClickListener mListener;
 
     public interface ClickListener {
-        void onItemClicked(String number);
+        void onItemClicked(String packageName);
     }
 
 

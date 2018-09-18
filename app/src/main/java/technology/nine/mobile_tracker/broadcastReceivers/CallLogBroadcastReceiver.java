@@ -84,32 +84,6 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void intentService(Context ctx, String number, Date start, Date end, String callType) {
-        //get call information PhoneStateListener
-      /*  DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-
-        String t1 = " ";
-        String t2 = " ";
-        Date d1 = null;
-        Date d2 = null;
-        String duration = "";
-        long diff;
-
-        if (start != null && end != null) {
-            try {
-                d1 = format.parse(dateFormat1.format(start));
-                d2 = format.parse(dateFormat1.format(end));
-                diff = d2.getTime() - d1.getTime();
-                int minutes = (int) (diff / (60 * 1000) % 60);
-                if (minutes != 0) {
-                    duration = (diff / (60 * 1000) % 60) + "m" + " " + (diff / 1000 % 60) + "sec";
-                } else {
-                    duration = (diff / 1000 % 60) + "sec";
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }*/
         DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
         String startDate = "";

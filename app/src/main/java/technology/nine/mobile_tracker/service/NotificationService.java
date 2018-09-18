@@ -2,7 +2,9 @@ package technology.nine.mobile_tracker.service;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -46,48 +48,13 @@ public class NotificationService extends NotificationListenerService {
     }
 
     private void insertData(StatusBarNotification sbn) {
-        /*String packageName = statusBarNotification.getPackageName();
-        Bundle extras = statusBarNotification.getNotification().extras;
-        String title = null;
-        if (extras.get(Notification.EXTRA_TITLE) != null) {
-            title = Objects.requireNonNull(extras.get(Notification.EXTRA_TITLE)).toString();
-        }
-        String text = null;
-        if (extras.get(Notification.EXTRA_TEXT) != null) {
-            text = Objects.requireNonNull(extras.get(Notification.EXTRA_TEXT)).toString();
-        }
-        int id = extras.getInt(Notification.EXTRA_SMALL_ICON);
-        Context remotePackageContext = null;
-        Bitmap bmp = null;
-        byte[] image = null;
-        try {
-            remotePackageContext = getApplicationContext().createPackageContext(packageName, 0);
-            Drawable icon = remotePackageContext.getResources().getDrawable(id);
-            if (icon != null) {
-                bmp = ((BitmapDrawable) icon).getBitmap();
-                image = DbBitmapUtility.getBytes(bmp);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String key = statusBarNotification.getKey();
-        Long time = statusBarNotification.getNotification().when;
-        Integer getId = statusBarNotification.getId();
-        Boolean ongoing = statusBarNotification.isOngoing();
-        int  style = statusBarNotification.describeContents();
-        Date date = new Date();
-        Log.e("Package", packageName +"");
-        Log.e("Title", title +"");
-        Log.e("Text", text +"");
-        Log.e("key", key +"");
-        Log.e("getId", String.valueOf(getId));
-        Log.e("Ongoing", String.valueOf(ongoing));
-        Log.e("Date", String.valueOf(date));
-        helper.insertNotifications(packageName, title, text, String.valueOf(time), image);*/
         String pack = sbn.getPackageName();
+        Notification notification = sbn.getNotification();
+        int color = notification.color;
+
         Bundle extras = sbn.getNotification().extras;
         String textlines = null;
-
+        int id = extras.getInt(Notification.EXTRA_SMALL_ICON);
         String ticker = null;
         if (sbn.getNotification().tickerText != null) {
             ticker = sbn.getNotification().tickerText.toString();
@@ -114,7 +81,7 @@ public class NotificationService extends NotificationListenerService {
         }
 
         String summary = null;
-        if(extras.get(Notification.EXTRA_SUMMARY_TEXT) != null) {
+        if (extras.get(Notification.EXTRA_SUMMARY_TEXT) != null) {
             summary = extras.get(Notification.EXTRA_SUMMARY_TEXT).toString();
         }
 
@@ -128,62 +95,89 @@ public class NotificationService extends NotificationListenerService {
             infotext = extras.get(Notification.EXTRA_INFO_TEXT).toString();
         }
 
-
         CharSequence[] textline = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
 
         if (textline != null) {
-            textlines = String.valueOf(textline.length)+"<br>- ";
+            textlines = String.valueOf(textline.length) + "<br>- ";
             textlines += TextUtils.join("<br>- ", textline);
         }
-
-
-        String tag = sbn.getTag();
-        //String key = sbn.getKey();
-        Boolean clear = sbn.isClearable();
-        Boolean ongoing = sbn.isOngoing();
-        Long time1 = sbn.getNotification().when;
-        Boolean time2 = extras.getBoolean(Notification.EXTRA_SHOW_WHEN);
-        Integer getid = sbn.getId();
-        //String groupkey = sbn.getGroupKey();
-        Long time3 = sbn.getPostTime();
-
-        int id = extras.getInt(Notification.EXTRA_SMALL_ICON);
-        Context remotePackageContext = null;
+        byte[] small_icon = new byte[0];
         Bitmap bmp = null;
-        byte[] image = null;
+        Context remotePackageContext = null;
         try {
             remotePackageContext = getApplicationContext().createPackageContext(pack, 0);
-            Drawable icon = remotePackageContext.getResources().getDrawable(id);
-            if (icon != null) {
-                bmp = ((BitmapDrawable) icon).getBitmap();
-                image = DbBitmapUtility.getBytes(bmp);
+            Drawable drawable = remotePackageContext.getResources().getDrawable(id);
+            if (drawable != null) {
+                bmp = getBitmap(drawable);
+                small_icon = DbBitmapUtility.getBytes(bmp);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Bitmap picture = (Bitmap) extras.get(Notification.EXTRA_PICTURE);
-        Bitmap largeIcon = (Bitmap) extras.get(Notification.EXTRA_LARGE_ICON_BIG);
-        Bitmap icon = (Bitmap) extras.get(Notification.EXTRA_BACKGROUND_IMAGE_URI);
-        Bitmap bigIcon = (Bitmap) extras.get(Notification.EXTRA_LARGE_ICON);
-        String backgroundUrl = (String)extras.get(Notification.	EXTRA_BACKGROUND_IMAGE_URI);
-        Log.e("pack",pack +"");
-        Log.e("ticker",ticker+"");
-        Log.e("title",title+"");
-        Log.e("title_big",title_big+"");
-        Log.e("text",text+"");
-        Log.e("text_big",text_big+"");
-        Log.e("summary",summary+"");
+        Long time1 = sbn.getNotification().when;
+        Long time3 = sbn.getPostTime();
+        if (time1 == null) {
+            time1 = time3;
+        }
+        if (text == null) {
+            text = textlines;
+        }
 
-        Log.e("textlines",textlines+"");
-        Log.e("tag",tag+"");
-        Log.e("clear",clear+"");
-        Log.e("ongoing",ongoing+"");
-        Log.e("time1",time1+"");
-        Log.e("getid",getid+"");
-        Log.e("time3",time3+"");
-        Log.e("Image",bmp+"");
-        Log.e("BigIcon",bigIcon+"");
-        Log.e("picture",picture+"");
+        Bitmap picture = (Bitmap) extras.get(Notification.EXTRA_PICTURE);
+        Bitmap bigIcon = (Bitmap) extras.get(Notification.EXTRA_LARGE_ICON);
+        String backgroundUrl = (String) extras.get(Notification.EXTRA_BACKGROUND_IMAGE_URI);
+        String appName = null;
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        try {
+            appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(pack, PackageManager.GET_META_DATA));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        //converting bitmap to byte array
+        byte[] large_icon = null;
+        if (bigIcon != null) {
+            large_icon = DbBitmapUtility.getBytes(bigIcon);
+        }
+        byte[] extra_picture = null;
+        if (picture != null) {
+            extra_picture = DbBitmapUtility.getBytes(picture);
+        }
+        if (title == null) {
+            title = "unknown";
+        }
+        if (text == null) {
+            text = "unknown";
+        }
+        if (!helper.readNotifications(pack, title, text, String.valueOf(time1))) {
+            helper.insertNotifications(pack, appName, title, title_big, text, text_big, summary, String.valueOf(time1), small_icon, large_icon, extra_picture);
+
+
+        }
+    }
+
+    public static Bitmap getBitmap(Drawable drawable) {
+        Bitmap createBitmap;
+        Canvas canvas;
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+        if (drawable.getIntrinsicWidth() > 0) {
+            if (drawable.getIntrinsicHeight() > 0) {
+                createBitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                canvas = new Canvas(createBitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+                return createBitmap;
+            }
+        }
+        createBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(createBitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return createBitmap;
     }
 }
 
