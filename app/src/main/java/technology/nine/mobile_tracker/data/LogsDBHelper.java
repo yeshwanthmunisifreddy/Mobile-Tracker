@@ -185,7 +185,6 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
-        Log.e("ReadSmsLogs", cursor.getCount() + "");
         if (cursor.getCount() != 0) {
             returnValue = true;
             cursor.close();

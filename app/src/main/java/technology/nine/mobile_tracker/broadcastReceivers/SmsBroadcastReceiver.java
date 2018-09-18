@@ -10,6 +10,12 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import technology.nine.mobile_tracker.service.CallDetectService;
+import technology.nine.mobile_tracker.service.IncomingSmsService;
 import technology.nine.mobile_tracker.service.SmsDetectingService;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
@@ -27,15 +33,26 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
             for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                 String messageBody = smsMessage.getMessageBody();
-                String add = smsMessage.getOriginatingAddress();
+                String number = smsMessage.getOriginatingAddress();
                 long date = smsMessage.getTimestampMillis();
                 String name = smsMessage.getDisplayMessageBody();
-                Toast.makeText(context,messageBody+" "+add,Toast.LENGTH_SHORT).show();
-                Log.e("messageBody",messageBody);
-                Log.e("address",add);
-                Log.e("time",date+"");
-                Log.e("name",name+"");
+              //converting time in milliseconds to date and time format
+                Date d1 = new Date(date);
+                DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
 
+                DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
+                String startDate = dateFormat.format(d1);
+                String time = timeFormat.format(d1);
+                Intent serviceIntent = new Intent(context, IncomingSmsService.class);
+                serviceIntent.putExtra("MessageBody",messageBody);
+                serviceIntent.putExtra("Number",number);
+                serviceIntent.putExtra("Date", startDate);
+                serviceIntent.putExtra("Time", time);
+                if (Build.VERSION.SDK_INT >= 26) {
+                    context.startForegroundService(serviceIntent);
+                } else {
+                    context.startService(serviceIntent);
+                }
             }
         }
 

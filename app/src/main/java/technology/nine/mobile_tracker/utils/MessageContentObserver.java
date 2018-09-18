@@ -82,20 +82,18 @@ public class MessageContentObserver extends ContentObserver {
                         }
                         Date d1 = new Date(date);
                         DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
-
                         DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
                         String startDate = dateFormat.format(d1);
                         String startTime = timeFormat.format(d1);
-                        if (messageType.equals("sent")) {
-                            if (!helper.readSMSLogs(add, body, startDate, startTime)) {
+                        assert messageType != null;
+                         if (type.equals("2")){
+                             if (!helper.readSMSLogs(add, body, startDate, startTime)) {
+                                 if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
+                                     updateUi();
+                                 }
+                             }
+                         }
 
-                                if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
-                                    updateUi();
-                                }
-
-                            }
-
-                        }
 
                     }
                 } finally {

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import technology.nine.mobile_tracker.R;
@@ -44,6 +48,13 @@ public class NotificationConversationRecyclerAdapter extends RecyclerView.Adapte
         byte[] bigIcon = notifications.get(i).getBigIcon();
         byte[] extraPicture = notifications.get(i).getExtraPicture();
         String  packageName = notifications.get(i).getPackageName();
+        String  date  = notifications.get(i).getDate();
+        //
+        Date d1 = new Date(Long.parseLong(date));
+        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+        DateFormat timeFormat = new SimpleDateFormat(" hh:mm a ");
+        String mDate = dateFormat.format(d1);
+        String mTime = timeFormat.format(d1);
         try
         {
             Drawable icon = context.getPackageManager().getApplicationIcon(packageName);
@@ -70,7 +81,7 @@ public class NotificationConversationRecyclerAdapter extends RecyclerView.Adapte
             holder.largeIcon.setImageBitmap(largeIcon);
         }
         else {
-           holder.linearLayout.setVisibility(View.GONE);
+          holder.largeIcon.setVisibility(View.GONE);
         }
         if(extraPicture != null){
             Bitmap bitmap = DbBitmapUtility.getImage(extraPicture);
@@ -79,6 +90,8 @@ public class NotificationConversationRecyclerAdapter extends RecyclerView.Adapte
         else {
             holder.extraPicture.setVisibility(View.GONE);
         }
+        holder.date.setText(mDate);
+        holder.time.setText(mTime);
 
 
 
@@ -91,7 +104,7 @@ public class NotificationConversationRecyclerAdapter extends RecyclerView.Adapte
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView smallIcon, largeIcon, extraPicture;
-        TextView app_name, summary, title, text, big_text;
+        TextView app_name, summary, title, text, big_text,date,time;
         LinearLayout linearLayout;
         ToggleButton expand_more;
 
@@ -105,8 +118,11 @@ public class NotificationConversationRecyclerAdapter extends RecyclerView.Adapte
             title = itemView.findViewById(R.id.title);
             text = itemView.findViewById(R.id.text);
             big_text = itemView.findViewById(R.id.big_text);
+            date = itemView.findViewById(R.id.date);
+            time = itemView.findViewById(R.id.time);
             linearLayout = itemView.findViewById(R.id.linear_layout_large_icon);
             expand_more = itemView.findViewById(R.id.expand_more);
+
         }
     }
 
