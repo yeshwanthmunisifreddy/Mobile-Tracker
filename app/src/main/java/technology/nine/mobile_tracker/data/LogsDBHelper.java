@@ -252,10 +252,9 @@ public class LogsDBHelper extends SQLiteOpenHelper {
                 String text = cursor.getString(cursor.getColumnIndexOrThrow(TEXT));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow(DATE));
                 String appName = cursor.getString(cursor.getColumnIndexOrThrow(APP_NAME));
-                byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(SMALL_ICON));
                 if (!linkedHashMap.containsKey(packageName)) {
                     ArrayList<NotificationLogs> notifications = new ArrayList<>();
-                    notifications.add(new NotificationLogs(packageName, title, text, date, appName,image));
+                    notifications.add(new NotificationLogs(packageName, title, text, date, appName));
                     linkedHashMap.put(packageName, notifications);
                 }
 
