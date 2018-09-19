@@ -68,7 +68,8 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="150dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
                     android:layout_marginStart="5dp"
@@ -78,19 +79,21 @@
                     tools:text="Messaging is running" />
                 <TextView
                     android:id="@+id/date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
-                    android:textSize="12sp"
+                    android:textSize="8sp"
                     tools:text="sep 18,2018" />
                 <TextView
                     android:id="@+id/time"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="10dp"
-                    android:textSize="12sp"
+                    android:textSize="8sp"
                     tools:text="11:20 pm" />
 
 
