@@ -273,7 +273,6 @@ public class LogsDBHelper extends SQLiteOpenHelper {
     }
 
     public List<Notifications> getEachPackageNotifications(String packageName) {
-        Log.e("PackageNotifications",packageName +"");
         SQLiteDatabase db = this.getReadableDatabase();
         List<Notifications> notifications = new ArrayList<>();
         String selection = APP_NAME + " = ?";

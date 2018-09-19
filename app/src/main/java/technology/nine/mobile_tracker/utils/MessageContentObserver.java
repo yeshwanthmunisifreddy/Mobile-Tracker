@@ -19,10 +19,10 @@ import technology.nine.mobile_tracker.data.LogsDBHelper;
 public class MessageContentObserver extends ContentObserver {
     private Context context;
     private LogsDBHelper helper;
-    public static final String COLUMN_ADDRESS = "address";
-    public static final String COLUMN_DATE = "date";
-    public static final String COLUMN_BODY = "body";
-    public static final String COLUMN_TYPE = "type";
+    private static final String COLUMN_ADDRESS = "address";
+    private static final String COLUMN_DATE = "date";
+    private static final String COLUMN_BODY = "body";
+    private static final String COLUMN_TYPE = "type";
     public static final String UPDATE_SMS_LOGS_UI = "UpdateSmsLogsUi";
 
     public MessageContentObserver(Context context, LogsDBHelper helper) {

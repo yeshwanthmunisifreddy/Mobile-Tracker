@@ -27,7 +27,15 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         super.onNotificationPosted(sbn);
-        insertData(sbn);
+        try {
+            insertData(sbn);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            helper.close();
+        }
+
 
 
     }
