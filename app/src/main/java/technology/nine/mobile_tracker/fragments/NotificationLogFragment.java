@@ -47,7 +47,7 @@ public class NotificationLogFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_notification_logs, container, false);
         recyclerView = view.findViewById(R.id.recycler_view_notification_fragment);
-        coordinatorLayout =  (CoordinatorLayout) view.findViewById(R.id.notification_relative_layout);
+        coordinatorLayout = (CoordinatorLayout) view.findViewById(R.id.notification_relative_layout);
         if (mListener != null) {
             mListener.onFragmentInteraction("Notifications", false);
         }
@@ -71,18 +71,20 @@ public class NotificationLogFragment extends Fragment {
     private void notificationAccess() {
         Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(Objects.requireNonNull(getContext()));
         if (packageNames.isEmpty()) {
-            Snackbar snackbar = Snackbar.make(   getActivity().findViewById(android.R.id.content), "Go to Notification Access", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction(" Notification Access", new View.OnClickListener() {
+            View.OnClickListener snackBArClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Build.VERSION.SDK_INT >= 22){
+                    if (Build.VERSION.SDK_INT >= 22) {
                         startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
-                    }else {
+                    } else {
                         startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
                     }
                 }
-            });
-           snackbar .show();
+            };
+
+            Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "Go to Notification Access", Snackbar.LENGTH_INDEFINITE)
+            .setAction(" Notification Access", snackBArClickListener);
+            snackbar.show();
         }
     }
 
