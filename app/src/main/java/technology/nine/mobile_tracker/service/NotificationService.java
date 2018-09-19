@@ -2,26 +2,24 @@ package technology.nine.mobile_tracker.service;
 
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
-
-import java.util.Date;
-import java.util.Objects;
 
 import technology.nine.mobile_tracker.utils.DbBitmapUtility;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 
 
 public class NotificationService extends NotificationListenerService {
+    public static final String UPDATE_NOTIFICATIONS_LOGS_UI = "updateNotificationUi";
     LogsDBHelper helper = new LogsDBHelper(NotificationService.this);
 
     @Override
@@ -29,13 +27,11 @@ public class NotificationService extends NotificationListenerService {
         super.onNotificationPosted(sbn);
         try {
             insertData(sbn);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             helper.close();
         }
-
 
 
     }
@@ -157,7 +153,8 @@ public class NotificationService extends NotificationListenerService {
             text = "unknown";
         }
         if (!helper.readNotifications(pack, title, text, String.valueOf(time1))) {
-            helper.insertNotifications(pack, appName, title, title_big, text, text_big, summary, String.valueOf(time1), small_icon, large_icon, extra_picture);
+            if (helper.insertNotifications(pack, appName, title, title_big, text, text_big, summary, String.valueOf(time1), small_icon, large_icon, extra_picture))
+                updateUi();
 
 
         }
@@ -186,6 +183,12 @@ public class NotificationService extends NotificationListenerService {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return createBitmap;
+    }
+
+    public void updateUi() {
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .sendBroadcast(new Intent(UPDATE_NOTIFICATIONS_LOGS_UI));
+
     }
 }
 

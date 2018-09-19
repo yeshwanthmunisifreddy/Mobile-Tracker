@@ -20,7 +20,6 @@ public class CallDetectService extends Service {
     LogsDBHelper helper = new LogsDBHelper(CallDetectService.this);
 
     public CallDetectService() {
-
     }
 
     @Override
@@ -56,12 +55,6 @@ public class CallDetectService extends Service {
         return null;
     }
 
-    public void updateUi() {
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .sendBroadcast(new Intent(UPDATE_CALL_LOGS_UI));
-
-    }
-
     private void readDate(String startDate, String startTime) {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
@@ -84,6 +77,12 @@ public class CallDetectService extends Service {
             }
 
         }
+
+    }
+
+    public void updateUi() {
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .sendBroadcast(new Intent(UPDATE_CALL_LOGS_UI));
 
     }
 

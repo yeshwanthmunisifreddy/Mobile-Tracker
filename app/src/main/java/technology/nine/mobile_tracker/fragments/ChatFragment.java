@@ -1,10 +1,14 @@
 package technology.nine.mobile_tracker.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +26,10 @@ import technology.nine.mobile_tracker.R;
 import technology.nine.mobile_tracker.adapters.ChatConversationRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
+import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
+
+import static technology.nine.mobile_tracker.fragments.NotificationLogFragment.snackbar;
 
 public class ChatFragment extends Fragment {
     LogsDBHelper helper;
@@ -33,6 +40,24 @@ public class ChatFragment extends Fragment {
     String number;
     View view;
     private OnFragmentInteractionListener listener;
+    //Local broadcast to update the ui from  background service
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            fetch(context);
+        }
+    };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +72,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_layout, container, false);
+        setHasOptionsMenu(true);
         if (listener != null) {
             listener.onFragmentInteraction(number, true);
         }
@@ -56,14 +82,17 @@ public class ChatFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            listener = (OnFragmentInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void onStart() {
+        super.onStart();
+        //registration of Local Broadcast
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
+                .registerReceiver(receiver, new IntentFilter(MessageContentObserver.UPDATE_SMS_LOGS_UI));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetch(getContext());
     }
 
     @Override
@@ -73,17 +102,18 @@ public class ChatFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        //unRegistration of Local Broadcast
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(receiver);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        fetch(getContext());
-    }
 
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
@@ -95,5 +125,7 @@ public class ChatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+
 }
 

@@ -40,21 +40,23 @@ public class IncomingSmsService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-    private  void readDate(Intent intent){
+
+    private void readDate(Intent intent) {
         String number = intent.getStringExtra("Number");
         String body = intent.getStringExtra("MessageBody");
-        String date= intent.getStringExtra("Date");
+        String date = intent.getStringExtra("Date");
         String time = intent.getStringExtra("Time");
         String type = "Received";
         if (!helper.readSMSLogs(number, body, date, time)) {
             if (helper.insertSMS(number, body, time, date, type)) {
                 updateUi();
-                Log.e("Incoming","is called");
+                Log.e("Incoming", "is called");
             }
 
         }
 
     }
+
     private void updateUi() {
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));

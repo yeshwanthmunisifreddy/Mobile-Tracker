@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,6 +27,8 @@ import technology.nine.mobile_tracker.adapters.SmsRecyclerAdapter;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 import technology.nine.mobile_tracker.model.SmsLogs;
 import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
+
+import static technology.nine.mobile_tracker.fragments.NotificationLogFragment.snackbar;
 
 public class MessageLogFragment extends Fragment {
     public static final String UPDATE_ALL_SMS_PER_USER = "updateAllSmsEveryUser";
@@ -45,12 +48,23 @@ public class MessageLogFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_layout, container, false);
         if (mListener != null) {
-            mListener.onFragmentInteraction("Messages",false);
+            mListener.onFragmentInteraction("Messages", false);
         }
         recyclerView = view.findViewById(R.id.recycler_view);
         fetch(getContext());
@@ -79,23 +93,6 @@ public class MessageLogFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mListener = (OnFragmentInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         fetch(getContext());
@@ -106,6 +103,12 @@ public class MessageLogFragment extends Fragment {
         super.onStop();
         //unRegistration of Local Broadcast
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
 
@@ -129,4 +132,6 @@ public class MessageLogFragment extends Fragment {
                 .sendBroadcast(new Intent(UPDATE_ALL_SMS_PER_USER));
 
     }
+
+
 }

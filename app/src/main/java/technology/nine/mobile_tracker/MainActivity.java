@@ -96,9 +96,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-
+        if (item.getItemId() == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -109,56 +110,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void displaySelectedScreen(int itemId) {
-        //creating fragment object
-        fragment = null;
-        //initializing the fragment object which is selected
-        switch (itemId) {
-            case R.id.call_logs:
-                fragment = new CallLogsFragments();
-                break;
-            case R.id.message_logs:
-                fragment = new MessageLogFragment();
-                break;
-            case R.id.notification_logs:
-                fragment = new NotificationLogFragment();
-                break;
-
-
-        }
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.content_frame, fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
-
     @Override
-    protected void onDestroy() {
-        try {
-            if (isMyServiceRunning(SmsDetectingService.class)) {
-                stopService(new Intent(MainActivity.this, SmsDetectingService.class));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.onDestroy();
-    }
-
-    //checking background service  running or not running
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        assert manager != null;
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
+    public void onFragmentInteraction(String title, boolean enable) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+        enableViews(enable);
+        chatFragment = enable;
     }
 
     @Override
@@ -187,10 +143,59 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(String title, boolean enable) {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-        enableViews(enable);
-        chatFragment = enable;
+    protected void onDestroy() {
+        try {
+            if (isMyServiceRunning(SmsDetectingService.class)) {
+                stopService(new Intent(MainActivity.this, SmsDetectingService.class));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+    }
+
+    private void displaySelectedScreen(int itemId) {
+        //creating fragment object
+        fragment = null;
+        //initializing the fragment object which is selected
+        switch (itemId) {
+            case R.id.call_logs:
+                fragment = new CallLogsFragments();
+                break;
+            case R.id.message_logs:
+                fragment = new MessageLogFragment();
+                break;
+            case R.id.notification_logs:
+                fragment = new NotificationLogFragment();
+                break;
+            case R.id.share:
+                Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.info:
+                Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.content_frame, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    //checking background service  running or not running
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //permissions for accessing the Call and SMS data

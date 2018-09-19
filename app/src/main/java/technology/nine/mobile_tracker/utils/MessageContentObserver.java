@@ -56,12 +56,6 @@ public class MessageContentObserver extends ContentObserver {
 
     }
 
-    private void updateUi() {
-        LocalBroadcastManager.getInstance(context)
-                .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
-
-    }
-
     private void insertSmsDatabase() {
         try {
             Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms"), null, null, null, " date DESC LIMIT  1 ");
@@ -86,13 +80,13 @@ public class MessageContentObserver extends ContentObserver {
                         String startDate = dateFormat.format(d1);
                         String startTime = timeFormat.format(d1);
                         assert messageType != null;
-                         if (type.equals("2")){
-                             if (!helper.readSMSLogs(add, body, startDate, startTime)) {
-                                 if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
-                                     updateUi();
-                                 }
-                             }
-                         }
+                        if (type.equals("2")) {
+                            if (!helper.readSMSLogs(add, body, startDate, startTime)) {
+                                if (helper.insertSMS(add, body, startTime, startDate, messageType)) {
+                                    updateUi();
+                                }
+                            }
+                        }
 
 
                     }
@@ -104,5 +98,12 @@ public class MessageContentObserver extends ContentObserver {
             e.printStackTrace();
         }
     }
+
+    private void updateUi() {
+        LocalBroadcastManager.getInstance(context)
+                .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
+
+    }
+
 }
 
