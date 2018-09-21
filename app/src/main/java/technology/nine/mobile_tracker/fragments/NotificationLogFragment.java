@@ -112,12 +112,13 @@ public class NotificationLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 fetch(getContext());
             }
-        }, 1500);
+        }, 1000);
         notificationAccess();
 
     }

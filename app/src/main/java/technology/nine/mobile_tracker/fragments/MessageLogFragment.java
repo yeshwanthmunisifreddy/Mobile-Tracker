@@ -71,6 +71,7 @@ public class MessageLogFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.recycler_view_progress_bar);
         emptyText = view.findViewById(R.id.recycler_view_empty_text);
+        emptyText.setText(R.string.messages_logs_is_empty);
         emptyText.setVisibility(View.GONE);
         if (mListener != null) {
             mListener.onFragmentInteraction("Messages", false);
@@ -88,6 +89,13 @@ public class MessageLogFragment extends Fragment {
                         .addToBackStack("chatActivity").commit();
             }
         };
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        }, 1000);
+
         return view;
     }
 
@@ -102,13 +110,7 @@ public class MessageLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetch(getContext());
-            }
-        }, 1500);
-
+         fetch(getContext());
     }
 
     @Override

@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,8 @@ public class DetailNotificationsFragment extends Fragment {
     List<Notifications> notifications = new ArrayList<>();
     private String appName;
     private OnFragmentInteractionListener listener;
-
+    ProgressBar progressBar;
+    TextView emptyText;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -74,6 +77,10 @@ public class DetailNotificationsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_layout, container, false);
+        progressBar = view.findViewById(R.id.recycler_view_progress_bar);
+        emptyText = view.findViewById(R.id.recycler_view_empty_text);
+        progressBar.setVisibility(View.GONE);
+        emptyText.setVisibility(View.GONE);
         if (listener != null) {
             listener.onFragmentInteraction(appName, true);
         }

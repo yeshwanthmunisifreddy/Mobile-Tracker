@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="technology.nine.mobile_tracker">
+
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -26,6 +27,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,9 +50,11 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="technology.nine.mobile_tracker.SMS_SERVICE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".service.CallDetectService"
             android:enabled="true"
@@ -62,7 +66,6 @@
             android:exported="true"
             android:stopWithTask="false">
             <intent-filter>
-
                 <action android:name="custom.SMS_SERVICE" />
             </intent-filter>
         </service>
@@ -71,7 +74,6 @@
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
-
             </intent-filter>
         </service>
         <service
@@ -80,6 +82,9 @@
             android:exported="true"
             android:stopWithTask="false" />
 
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

@@ -73,6 +73,12 @@ public class CallLogsFragments extends Fragment {
         if (listener != null) {
             listener.onFragmentInteraction("Calls", false);
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        },1000);
         return view;
     }
 
@@ -88,12 +94,7 @@ public class CallLogsFragments extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetch(getContext());
-            }
-        },1500);
+      fetch(getContext());
 
     }
 
