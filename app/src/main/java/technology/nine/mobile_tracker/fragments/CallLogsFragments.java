@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,8 @@ public class CallLogsFragments extends Fragment {
     LinearLayoutManager linearLayoutManager;
     List<CallLogs> callLogs = new ArrayList<>();
     private OnFragmentInteractionListener listener;
+    ProgressBar progressBar;
+    TextView emptyText;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -61,12 +66,13 @@ public class CallLogsFragments extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_layout, container, false);
-
+        recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.recycler_view_progress_bar);
+        emptyText = view.findViewById(R.id.recycler_view_empty_text);
+        emptyText.setVisibility(View.GONE);
         if (listener != null) {
             listener.onFragmentInteraction("Calls", false);
         }
-        recyclerView = view.findViewById(R.id.recycler_view);
-        fetch(getContext());
         return view;
     }
 
@@ -82,7 +88,13 @@ public class CallLogsFragments extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetch(getContext());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        },1500);
+
     }
 
     @Override
@@ -102,12 +114,22 @@ public class CallLogsFragments extends Fragment {
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         callLogs = helper.getAllCallLog();
-        linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new CallLogsRecyclerAdapter(context);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        adapter.addAll(callLogs);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        if (!callLogs.isEmpty()){
+            emptyText.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            linearLayoutManager = new LinearLayoutManager(context);
+            adapter = new CallLogsRecyclerAdapter(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            adapter.addAll(callLogs);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+        else {
+            emptyText.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+        }
+
+
 
     }
 

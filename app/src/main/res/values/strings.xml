@@ -26,4 +26,5 @@
     <string name="large_icon">largeIcon</string>
     <string name="extra_picture">extraPicture</string>
     <string name="go_to_notification_access">Go To Notification Access</string>
+    <string name="call_logs_is_empty">Call Logs is Empty</string>
 </resources>

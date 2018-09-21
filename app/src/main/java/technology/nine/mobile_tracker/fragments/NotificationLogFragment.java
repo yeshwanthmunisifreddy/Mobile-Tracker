@@ -22,7 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,8 @@ public class NotificationLogFragment extends Fragment {
     CoordinatorLayout coordinatorLayout;
     public static Snackbar snackbar = null;
     boolean settingValue = false;
+    ProgressBar progressBar;
+    TextView emptyText;
 
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -76,6 +80,9 @@ public class NotificationLogFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_notification_logs, container, false);
         recyclerView = view.findViewById(R.id.recycler_view_notification_fragment);
         coordinatorLayout = view.findViewById(R.id.notification_relative_layout);
+        progressBar = view.findViewById(R.id.progress_bar);
+        emptyText = view.findViewById(R.id.empty_text);
+        emptyText.setVisibility(View.GONE);
         if (mListener != null) {
             mListener.onFragmentInteraction("Notifications", false);
         }
@@ -91,7 +98,6 @@ public class NotificationLogFragment extends Fragment {
                         .addToBackStack("chatActivity").commit();
             }
         };
-        fetch(getContext());
         return view;
     }
 
@@ -106,7 +112,12 @@ public class NotificationLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetch(getContext());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        }, 1500);
         notificationAccess();
 
     }
@@ -148,13 +159,21 @@ public class NotificationLogFragment extends Fragment {
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         notificationLogs = helper.getAllNotifications();
-        linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new NotificationRecyclerAdapter(context, listener);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-        adapter.addAll(notificationLogs);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        if (!notificationLogs.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
+            emptyText.setVisibility(View.GONE);
+            linearLayoutManager = new LinearLayoutManager(context);
+            adapter = new NotificationRecyclerAdapter(context, listener);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+            adapter.addAll(notificationLogs);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }else {
+            progressBar.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+
 
     }
 

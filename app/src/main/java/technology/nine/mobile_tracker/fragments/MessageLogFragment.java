@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,8 +17,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +35,6 @@ import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
 import static technology.nine.mobile_tracker.fragments.NotificationLogFragment.snackbar;
 
 public class MessageLogFragment extends Fragment {
-    public static final String UPDATE_ALL_SMS_PER_USER = "updateAllSmsEveryUser";
     View view;
     LogsDBHelper helper;
     RecyclerView recyclerView;
@@ -39,6 +42,8 @@ public class MessageLogFragment extends Fragment {
     LinearLayoutManager linearLayoutManager;
     List<SmsLogs> smsLogs = new ArrayList<>();
     SmsRecyclerAdapter.ClickListener listener;
+    ProgressBar progressBar;
+    TextView emptyText;
     private OnFragmentInteractionListener mListener;
     //Local broadcast to update the ui from  background service
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -63,11 +68,13 @@ public class MessageLogFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.recycler_layout, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.recycler_view_progress_bar);
+        emptyText = view.findViewById(R.id.recycler_view_empty_text);
+        emptyText.setVisibility(View.GONE);
         if (mListener != null) {
             mListener.onFragmentInteraction("Messages", false);
         }
-        recyclerView = view.findViewById(R.id.recycler_view);
-        fetch(getContext());
         listener = new SmsRecyclerAdapter.ClickListener() {
             @Override
             public void onItemClicked(String number) {
@@ -95,7 +102,13 @@ public class MessageLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetch(getContext());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        }, 1500);
+
     }
 
     @Override
@@ -116,22 +129,21 @@ public class MessageLogFragment extends Fragment {
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         smsLogs = helper.getAllSMS();
-        linearLayoutManager = new LinearLayoutManager(context);
-        adapter = new SmsRecyclerAdapter(context, listener);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-        adapter.addAll(smsLogs);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        updateUi();
+        if (!smsLogs.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
+            emptyText.setVisibility(View.GONE);
+            linearLayoutManager = new LinearLayoutManager(context);
+            adapter = new SmsRecyclerAdapter(context, listener);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            // recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+            adapter.addAll(smsLogs);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        } else {
+            progressBar.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
+
 
     }
-
-    private void updateUi() {
-        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext()))
-                .sendBroadcast(new Intent(UPDATE_ALL_SMS_PER_USER));
-
-    }
-
-
 }
