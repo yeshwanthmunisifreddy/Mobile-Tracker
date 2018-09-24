@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#c30000</color>
     <color name="colorAccent">#7c43bd</color>
     <color name="colorSecondary">@android:color/transparent</color>
+    <color name="mine_shaft">#efc5ca</color>
 </resources>

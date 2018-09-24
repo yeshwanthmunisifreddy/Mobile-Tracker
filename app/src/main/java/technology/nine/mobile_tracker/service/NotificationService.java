@@ -13,6 +13,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import technology.nine.mobile_tracker.utils.DbBitmapUtility;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
@@ -25,6 +26,8 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         super.onNotificationPosted(sbn);
+        Log.e("onNotificationPosted","is called");
+
         try {
             insertData(sbn);
         } catch (Exception e) {
@@ -106,18 +109,6 @@ public class NotificationService extends NotificationListenerService {
             textlines += TextUtils.join("<br>- ", textline);
         }
         byte[] small_icon = new byte[0];
-        Bitmap bmp = null;
-        Context remotePackageContext = null;
-        try {
-            remotePackageContext = getApplicationContext().createPackageContext(pack, 0);
-            Drawable drawable = remotePackageContext.getResources().getDrawable(id);
-            if (drawable != null) {
-                bmp = getBitmap(drawable);
-                small_icon = DbBitmapUtility.getBytes(bmp);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         Long time1 = sbn.getNotification().when;
         Long time3 = sbn.getPostTime();
         if (time1 == null) {
@@ -126,7 +117,6 @@ public class NotificationService extends NotificationListenerService {
         if (text == null) {
             text = textlines;
         }
-
         Bitmap picture = (Bitmap) extras.get(Notification.EXTRA_PICTURE);
         Bitmap bigIcon = (Bitmap) extras.get(Notification.EXTRA_LARGE_ICON);
         String backgroundUrl = (String) extras.get(Notification.EXTRA_BACKGROUND_IMAGE_URI);

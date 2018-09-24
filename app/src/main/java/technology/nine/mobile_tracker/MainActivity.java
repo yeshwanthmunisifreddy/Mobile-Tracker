@@ -77,13 +77,19 @@ public class MainActivity extends AppCompatActivity
         //start background service
         if (!isMyServiceRunning(SmsDetectingService.class)) {
             mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
-            if (Build.VERSION.SDK_INT >= 26) {
-                startForegroundService(mServiceIntent);
-            } else {
+            if (Build.VERSION.SDK_INT < 26) {
                 startService(mServiceIntent);
+            }if (Build.VERSION.SDK_INT >=26){
+                jobScheduler();
             }
         }
         displaySelectedScreen(R.id.call_logs);
+
+    }
+
+    private void jobScheduler() {
+
+
 
     }
 
@@ -97,7 +103,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this,PatternLockActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -172,7 +179,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.info:
-                Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+               fragment = new SettingsActivity();
                 break;
         }
         if (fragment != null) {

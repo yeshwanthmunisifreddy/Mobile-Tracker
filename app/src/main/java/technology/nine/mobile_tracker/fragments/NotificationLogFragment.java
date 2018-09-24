@@ -98,6 +98,13 @@ public class NotificationLogFragment extends Fragment {
                         .addToBackStack("chatActivity").commit();
             }
         };
+         settingValue = true;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetch(getContext());
+            }
+        }, 1000);
         return view;
     }
 
@@ -112,15 +119,11 @@ public class NotificationLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetch(getContext());
-            }
-        }, 1000);
+        if (!settingValue){
+            fetch(getContext());
+        }
         notificationAccess();
-
+         settingValue = false;
     }
 
     @Override
@@ -170,7 +173,7 @@ public class NotificationLogFragment extends Fragment {
             adapter.addAll(notificationLogs);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-        }else {
+        } else {
             progressBar.setVisibility(View.GONE);
             emptyText.setVisibility(View.VISIBLE);
         }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -96,6 +97,7 @@ public class CallLogBroadcastReceiver extends BroadcastReceiver {
         serviceIntent.putExtra("StartDate", startDate);
         serviceIntent.putExtra("StartTime", startTime);
         if (Build.VERSION.SDK_INT >= 26) {
+            Log.e("StartForeGround","is called");
             ctx.startForegroundService(serviceIntent);
         } else {
             ctx.startService(serviceIntent);
