@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.Objects;
+import java.util.Set;
 
 import technology.nine.mobile_tracker.fragments.CallLogsFragments;
 import technology.nine.mobile_tracker.fragments.MessageLogFragment;
@@ -75,11 +77,21 @@ public class MainActivity extends AppCompatActivity
         if (!isMyServiceRunning(SmsDetectingService.class)) {
             mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
             if (Build.VERSION.SDK_INT >= 24) {
-                  Util.scheduleJob(getApplicationContext());
-            }else {
+                Util.scheduleJob(getApplicationContext());
+            } else {
                 startService(mServiceIntent);
             }
         }
+
+        //check for Notification Access
+       /* Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(Objects.requireNonNull(getApplicationContext()));
+        if (!packageNames.contains("technology.nine.mobile_tracker")) {
+            if (Build.VERSION.SDK_INT >= 22) {
+                startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            } else {
+                startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+            }
+        }*/
         displaySelectedScreen(R.id.call_logs);
 
 
@@ -94,7 +106,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
-             Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -194,6 +206,7 @@ public class MainActivity extends AppCompatActivity
         }
         return false;
     }
+
     //permissions for accessing the Call and SMS data
     public void permissions() {
         if (Build.VERSION.SDK_INT >= 23) {

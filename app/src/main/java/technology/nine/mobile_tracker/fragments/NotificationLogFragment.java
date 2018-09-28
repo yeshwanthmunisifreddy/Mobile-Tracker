@@ -26,7 +26,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -140,8 +142,9 @@ public class NotificationLogFragment extends Fragment {
     }
 
     private void notificationAccess() {
+        Log.e("notificationAccess","is called");
         Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(Objects.requireNonNull(getContext()));
-        if (packageNames.isEmpty()) {
+        if (!packageNames.contains("technology.nine.mobile_tracker")) {
             View.OnClickListener snackBArClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
