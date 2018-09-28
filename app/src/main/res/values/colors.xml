@@ -5,4 +5,6 @@
     <color name="colorAccent">#7c43bd</color>
     <color name="colorSecondary">@android:color/transparent</color>
     <color name="mine_shaft">#efc5ca</color>
+    <color name="red">#dd2c00</color>
+    <color name="white">#ffffff</color>
 </resources>

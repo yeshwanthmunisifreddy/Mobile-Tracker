@@ -94,7 +94,8 @@
         </activity>
         <activity
             android:name=".PatternLockActivity"
-            android:label="Choose your pattern" />
+            android:label="Choose your pattern"
+            />
     </application>
 
 </manifest>
