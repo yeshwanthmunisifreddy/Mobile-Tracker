@@ -1,7 +1,6 @@
 package technology.nine.mobile_tracker;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -27,11 +25,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
@@ -41,6 +37,7 @@ import technology.nine.mobile_tracker.fragments.MessageLogFragment;
 import technology.nine.mobile_tracker.fragments.NotificationLogFragment;
 import technology.nine.mobile_tracker.service.SmsDetectingService;
 import technology.nine.mobile_tracker.utils.OnFragmentInteractionListener;
+import technology.nine.mobile_tracker.utils.Util;
 
 
 public class MainActivity extends AppCompatActivity
@@ -77,22 +74,16 @@ public class MainActivity extends AppCompatActivity
         //start background service
         if (!isMyServiceRunning(SmsDetectingService.class)) {
             mServiceIntent = new Intent(MainActivity.this, SmsDetectingService.class);
-            if (Build.VERSION.SDK_INT < 26) {
+            if (Build.VERSION.SDK_INT >= 24) {
+                  Util.scheduleJob(getApplicationContext());
+            }else {
                 startService(mServiceIntent);
-            }if (Build.VERSION.SDK_INT >=26){
-                jobScheduler();
             }
         }
         displaySelectedScreen(R.id.call_logs);
 
-    }
-
-    private void jobScheduler() {
-
-
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,7 +95,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             // Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this,PatternLockActivity.class));
+            startActivity(new Intent(this, PatternLockActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -179,7 +170,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.info:
-               fragment = new SettingsActivity();
+                fragment = new SettingsActivity();
                 break;
         }
         if (fragment != null) {
@@ -204,7 +195,6 @@ public class MainActivity extends AppCompatActivity
         }
         return false;
     }
-
     //permissions for accessing the Call and SMS data
     public void permissions() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -382,5 +372,6 @@ public class MainActivity extends AppCompatActivity
             mToolBarNavigationListenerIsRegistered = false;
         }
     }
+
 
 }

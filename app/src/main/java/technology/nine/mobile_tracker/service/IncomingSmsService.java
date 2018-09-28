@@ -33,7 +33,6 @@ public class IncomingSmsService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
-        Log.e("onStartCommand", "is called in IncomingSMSService");
         int res = super.onStartCommand(intent, flags, startId);
         if (intent != null) {
             new Handler().postDelayed(new Runnable() {
@@ -67,7 +66,7 @@ public class IncomingSmsService extends Service {
         if (!helper.readSMSLogs(number, body, date, time)) {
             if (helper.insertSMS(number, body, time, date, type)) {
                 updateUi();
-                Log.e("Incoming", "is called");
+                stopSelf();
             }
         }
     }
@@ -75,7 +74,7 @@ public class IncomingSmsService extends Service {
     private void updateUi() {
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .sendBroadcast(new Intent(UPDATE_SMS_LOGS_UI));
-        stopSelf();
+
 
     }
 

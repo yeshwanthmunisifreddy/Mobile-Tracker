@@ -1,6 +1,7 @@
 package technology.nine.mobile_tracker.broadcastReceivers;
 
 import android.app.ActivityManager;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Telephony;
+import android.support.v4.app.JobIntentService;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
@@ -72,6 +74,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             if (Build.VERSION.SDK_INT < 26) {
                 context.startService(serviceIntent);
             }
+
         }
 
     }

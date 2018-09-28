@@ -4,13 +4,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import technology.nine.mobile_tracker.utils.MessageContentObserver;
 import technology.nine.mobile_tracker.data.LogsDBHelper;
 
-public class SmsDetectingService extends Service {
+public class SmsDetectingService extends JobIntentService{
     LogsDBHelper helper = new LogsDBHelper(SmsDetectingService.this);
 
     public SmsDetectingService() {
@@ -19,6 +21,7 @@ public class SmsDetectingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e("onCreate","in service is called");
         this.getApplicationContext().getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, new MessageContentObserver(this, helper));
     }
 
@@ -49,11 +52,10 @@ public class SmsDetectingService extends Service {
         getContentResolver().unregisterContentObserver(new MessageContentObserver(getApplicationContext(), helper));
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    protected void onHandleWork(@NonNull Intent intent) {
+        Log.e("onHandleWork","in service is called");
 
+    }
 
 }

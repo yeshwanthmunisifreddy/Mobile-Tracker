@@ -34,7 +34,7 @@ public class CallDetectService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Build.VERSION.SDK_INT >= 26){
+        if (Build.VERSION.SDK_INT >= 26) {
             startMyOwnForeground();
         }
 
@@ -90,18 +90,20 @@ public class CallDetectService extends Service {
                     }
                 } finally {
                     cursor.close();
+
                 }
 
             }
 
         }
+        stopSelf();
 
     }
 
     public void updateUi() {
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .sendBroadcast(new Intent(UPDATE_CALL_LOGS_UI));
-        stopSelf();
+
 
     }
 
