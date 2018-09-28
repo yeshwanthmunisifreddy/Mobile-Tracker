@@ -110,7 +110,7 @@ public class MessageLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-         fetch(getContext());
+
     }
 
     @Override

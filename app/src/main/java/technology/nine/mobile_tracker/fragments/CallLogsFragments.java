@@ -73,12 +73,13 @@ public class CallLogsFragments extends Fragment {
         if (listener != null) {
             listener.onFragmentInteraction("Calls", false);
         }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 fetch(getContext());
             }
-        },1000);
+        }, 1000);
         return view;
     }
 
@@ -94,7 +95,8 @@ public class CallLogsFragments extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-      fetch(getContext());
+
+
 
     }
 
@@ -111,11 +113,12 @@ public class CallLogsFragments extends Fragment {
         super.onDetach();
         listener = null;
     }
+
     //load Call Logs  data from database into recycler view
     private void fetch(Context context) {
         helper = new LogsDBHelper(context);
         callLogs = helper.getAllCallLog();
-        if (!callLogs.isEmpty()){
+        if (!callLogs.isEmpty()) {
             emptyText.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             linearLayoutManager = new LinearLayoutManager(context);
@@ -124,12 +127,10 @@ public class CallLogsFragments extends Fragment {
             adapter.addAll(callLogs);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-        }
-        else {
+        } else {
             emptyText.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
         }
-
 
 
     }
