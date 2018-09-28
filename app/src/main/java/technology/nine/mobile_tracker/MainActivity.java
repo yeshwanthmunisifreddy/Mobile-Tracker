@@ -94,8 +94,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
-            // Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, PatternLockActivity.class));
+             Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.info:
-                fragment = new SettingsActivity();
+                Toast.makeText(getApplicationContext(), "do your stuff here", Toast.LENGTH_SHORT).show();
                 break;
         }
         if (fragment != null) {
